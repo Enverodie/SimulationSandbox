@@ -19,49 +19,39 @@ let isDragging = false
 let dragStart = { x: 0, y: 0 }
 
 // Gets the relevant location from a mouse or single touch event
-function getEventLocation(e)
-{
-    if (e.touches && e.touches.length == 1)
-    {
+function getEventLocation(e) {
+    if (e.touches && e.touches.length == 1) {
         return { x:e.touches[0].clientX, y: e.touches[0].clientY }
     }
-    else if (e.clientX && e.clientY)
-    {
+    else if (e.clientX && e.clientY) {
         return { x: e.clientX, y: e.clientY }        
     }
 }
 
-function onPointerDown(e)
-{
+function onPointerDown(e) {
     isDragging = true
     dragStart.x = getEventLocation(e).x/cameraZoom - cameraOffset.x
     dragStart.y = getEventLocation(e).y/cameraZoom - cameraOffset.y
 }
 
-function onPointerUp(e)
-{
+function onPointerUp(e) {
     isDragging = false
     initialPinchDistance = null
     lastZoom = cameraZoom
 }
 
-function onPointerMove(e)
-{
-    if (isDragging)
-    {
+function onPointerMove(e) {
+    if (isDragging) {
         cameraOffset.x = getEventLocation(e).x/cameraZoom - dragStart.x
         cameraOffset.y = getEventLocation(e).y/cameraZoom - dragStart.y
     }
 }
 
-function handleTouch(e, singleTouchHandler)
-{
-    if ( e.touches.length == 1 )
-    {
+function handleTouch(e, singleTouchHandler) {
+    if ( e.touches.length == 1 ) {
         singleTouchHandler(e)
     }
-    else if (e.type == "touchmove" && e.touches.length == 2)
-    {
+    else if (e.type == "touchmove" && e.touches.length == 2) {
         isDragging = false
         handlePinch(e)
     }
@@ -70,8 +60,7 @@ function handleTouch(e, singleTouchHandler)
 let initialPinchDistance = null
 let lastZoom = cameraZoom
 
-function handlePinch(e)
-{
+function handlePinch(e) {
     e.preventDefault()
     
     let touch1 = { x: e.touches[0].clientX, y: e.touches[0].clientY }
@@ -80,26 +69,20 @@ function handlePinch(e)
     // This is distance squared, but no need for an expensive sqrt as it's only used in ratio
     let currentDistance = (touch1.x - touch2.x)**2 + (touch1.y - touch2.y)**2
     
-    if (initialPinchDistance == null)
-    {
+    if (initialPinchDistance == null) {
         initialPinchDistance = currentDistance
     }
-    else
-    {
+    else {
         adjustZoom( null, currentDistance/initialPinchDistance )
     }
 }
 
-function adjustZoom(zoomAmount, zoomFactor)
-{
-    if (!isDragging)
-    {
-        if (zoomAmount)
-        {
+function adjustZoom(zoomAmount, zoomFactor) {
+    if (!isDragging) {
+        if (zoomAmount) {
             cameraZoom -= zoomAmount
         }
-        else if (zoomFactor)
-        {
+        else if (zoomFactor) {
             console.log(zoomFactor)
             cameraZoom = zoomFactor*lastZoom
         }
@@ -119,27 +102,17 @@ canvas.addEventListener('mousemove', onPointerMove)
 canvas.addEventListener('touchmove', (e) => handleTouch(e, onPointerMove))
 canvas.addEventListener( 'wheel', (e) => adjustZoom(e.deltaY*SCROLL_SENSITIVITY))
 
-
-function create() {
-    for (let i = 0; i < boxes; i++) {
-        for (let j = 0; j < boxes; j++) {
-            let color = warmColors[ Math.floor(Math.random() * warmColors.length) ];
-            squares.push(new Square(i, j, color));
-        }
-    }
-}
-create();
-
+// TODO: make this infinite
 function drawGrid() {
     const thickness = .075;
     ctx.save();
 
     ctx.fillStyle = 'gray';
     ctx.scale(scale, scale);
-    for (let i = -canvas.width; i <= canvas.width; i++) {
+    for (let i = -canvas.width; i <= canvas.width; i++) { // draw vertical lines
         ctx.fillRect(i-(thickness/2), -canvas.height, thickness, 2*canvas.height);
     }
-    for (let i = -canvas.height; i <= canvas.height; i++) {
+    for (let i = -canvas.height; i <= canvas.height; i++) { // draw horizontal lines
         ctx.fillRect(-canvas.width, i-(thickness/2), 2*canvas.width, thickness);
     }
 
@@ -152,9 +125,6 @@ function drawSquares() {
     for (s of g.living.values()) {
         s.draw();
     }
-    // ctx.fillStyle = "blue";
-    // ctx.fillRect(0, 0, 1, 1);
-
     ctx.restore();
 }
 
@@ -210,14 +180,14 @@ canvas.addEventListener('click', (e) => {
     console.log(e);
 })
 
-// document.addEventListener('wheel', (e) => {
-//     ctx.scale(1, 1);
-//     let sf;
-//     if (e.wheelDeltaY > 0) sf = 1.1;
-//     else sf = .9;
-//     ctx.translate(e.clientX, e.clientY);
-//     ctx.scale(sf, sf);
-//     ctx.translate(-e.clientX, -e.clientY);
-//     drawAll();
-// })
+// creates a bunch of boxes adjacent to one another 
+function create() {
+    for (let i = 0; i < boxes; i++) {
+        for (let j = 0; j < boxes; j++) {
+            let color = warmColors[ Math.floor(Math.random() * warmColors.length) ];
+            squares.push(new Square(i, j, color));
+        }
+    }
+}
+// create();
 

@@ -89,26 +89,3 @@ function dissectCoord(coord) {
     let y = Number.parseInt(coord.slice(coord.indexOf(',') + 1, coord.length));
     return {x: x, y: y};
 }
-
-// reproduce rule contains the area of influence function and the starter box. It is designed to add to the g.nextGen map.
-// function reproduceRule_Conway_Standard(AoI, coord, parent) {
-//     let count = 0;
-//     for (neighbor of AoI(coord)) {
-//         if (g.living.has(neighbor)) count++;
-//     }
-//     if (count === 3) {
-//         let x = Math.parseInt(coord.slice(0,coord.indexOf(',')));
-//         let y = Math.parseInt(coord.slice(coord.indexOf(',') + 1, coord.length));
-//         let sq = new Square(x, y, parent.color, parent.surviveCondition, parent.type, parent.extraSurviveConditions, AoI, parent.reproduceRule);
-//         g.nextGen.set(coord, sq);
-//     }
-// }
-
-
-// this.reproduceTo = function() {
-//     function canSpread(coordinate, rule) {
-//         let x = Math.parseInt(coordinate.slice(0,coordinate.indexOf(',')));
-//         let y = Math.parseInt(coordinate.slice(coordinate.indexOf(',') + 1, coordinate.length));
-//     }
-
-// }
