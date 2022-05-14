@@ -54,7 +54,7 @@ function Square(x, y, color, type, sphereOfInfluence, surviveCondition, extraSur
         ctx.fillRect(this.x, this.y, 1, 1);
     };
     this.canSurvive = function() {
-        if (this.surviveCondition(this.sphereOfInfluence)) {} else return false;
+        if (!this.surviveCondition(this.sphereOfInfluence)) return false;
         for (rule of this.extraSurviveConditions) {
             if (!rule(this.sphereOfInfluence)) return false;
         }
