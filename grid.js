@@ -36,10 +36,10 @@ function lazyInitGoL() {
     lazyBeacon(16, 10);
     lazyPentaDecathlon(32, 10);
     */
-   g.living.set('0,0', new Square(0,0, 'blue'));
-   g.living.set('95,0', new Square(95,0, 'blue'));
-   g.living.set('0,47', new Square(0,47, 'blue'));
-   g.living.set('95,47', new Square(95,47, 'blue'));
+//    g.living.set('0,0', new Square(0,0, 'blue'));
+//    g.living.set('95,0', new Square(95,0, 'blue'));
+//    g.living.set('0,47', new Square(0,47, 'blue'));
+//    g.living.set('95,47', new Square(95,47, 'blue'));
    g.runLoop();
 }
 lazyInitGoL();

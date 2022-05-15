@@ -8,7 +8,7 @@ const ac = {
 const gs = {
     dragging    : false,
     playing     : false,
-    placeMode   : true,
+    placeMode   : false,
 }
 
 // handle keyboard inputs
@@ -85,14 +85,6 @@ function onPointerDown(e) {
     // drag mode
     if (ac.spaceDown) {
         gs.dragging = true;
-        let sOrigX = canvas.width/2, sOrigY = canvas.height/2;
-        let pxDistX = ((cameraOffset.x*cameraZoom)-(sOrigX)*cameraZoom+sOrigX);
-        let pxDistY = ((cameraOffset.y*cameraZoom)-(sOrigY)*cameraZoom+sOrigY);
-        let bxDistX = Math.ceil(pxDistX / (scale * cameraZoom));
-        let bxDistY = Math.ceil(pxDistY / (scale * cameraZoom));
-        console.warn( pxDistX, pxDistY, bxDistX, bxDistY );
-        console.log(e.clientX, e.clientY);
-        // console.warn( ((e.clientX / scale) - (cameraOffset.x / scale)), ((e.clientY / scale) - (cameraOffset.y / scale)));
         dragStart.x = getEventLocation(e).x/cameraZoom - cameraOffset.x;
         dragStart.y = getEventLocation(e).y/cameraZoom - cameraOffset.y;
     }
@@ -111,6 +103,7 @@ function onPointerUp(e) {
         initialPinchDistance = null;
         lastZoom = cameraZoom;
     }
+    if (gs.placeMode) gs.placeMode = !gs.placeMode;
 }
 
 // this function checks gamestates
@@ -181,12 +174,25 @@ canvas.addEventListener('wheel', (e) => adjustZoom(e.deltaY*SCROLL_SENSITIVITY))
 // mouse event listener helper functions
 
 function placeSquare(e) {
-    let originX = cameraOffset.x + (cameraZoom)*canvas.width;
-    let originY = cameraOffset.y + (cameraZoom)*canvas.height;
     let x = e.clientX, y = e.clientY;
+    let d = originDistanceFromDrawOrigin();
+    let dx = d.x - x, dy = d.y - y;
+    let bx = calcBoxDistance(dx);
+    let by = calcBoxDistance(dy);
+    // console.log("expected coordinates.", bx, by); 
+    g.living.set(`${bx},${by}`, new Square(bx, by, 'blue'));
+}
 
-    let distX = Math.floor((originX - x)/scale), distY = Math.floor((originY - y)/scale);
-    // console.log(distX, distY);
-    let originCoordX = originX / scale, originCoordY = originY / scale;
+function originDistanceFromDrawOrigin() {
+    let sOrigX = canvas.width/2, sOrigY = canvas.height/2;
+    let pxDistX = ((cameraOffset.x*cameraZoom)-(sOrigX)*cameraZoom+sOrigX);
+    let pxDistY = ((cameraOffset.y*cameraZoom)-(sOrigY)*cameraZoom+sOrigY);
+    let bxDistX = calcBoxDistance(pxDistX);
+    let bxDistY = calcBoxDistance(pxDistY);
+    console.warn( pxDistX, pxDistY, bxDistX, bxDistY );
+    return {x : pxDistX, y: pxDistY, xb: bxDistX, yb: bxDistY};
+}
 
+function calcBoxDistance(pixelDistance) {
+    return -Math.ceil(pixelDistance / (scale * cameraZoom));
 }
