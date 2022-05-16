@@ -1,7 +1,7 @@
 // active controls
 const ac = { 
     spaceDown : false,
-    holdclick : false,
+    holdLclick : false,
 }
 
 // gamestate
@@ -9,6 +9,7 @@ const gs = {
     dragging    : false,
     playing     : false,
     placeMode   : false,
+    deleteMode  : false,
 }
 
 // handle keyboard inputs
@@ -81,29 +82,44 @@ function getEventLocation(e) {
 
 // this function sets game states
 function onPointerDown(e) {
-    ac.holdclick = true;
-    // drag mode
-    if (ac.spaceDown) {
-        gs.dragging = true;
-        dragStart.x = getEventLocation(e).x/cameraZoom - cameraOffset.x;
-        dragStart.y = getEventLocation(e).y/cameraZoom - cameraOffset.y;
+    console.log(e);
+    if (e.buttons === 1) { // if left click
+        ac.holdLclick = true;
+        // drag mode
+        if (ac.spaceDown) {
+            gs.dragging = true;
+            dragStart.x = getEventLocation(e).x/cameraZoom - cameraOffset.x;
+            dragStart.y = getEventLocation(e).y/cameraZoom - cameraOffset.y;
+        }
+        // place mode
+        if (!ac.spaceDown && e.ctrlKey) { // if not holding space and control clicking
+            gs.placeMode = true;
+            placeSquare(e);
+        }
+        // delete mode
+        if (!ac.spaceDown && e.shiftKey) { // if not holding space and control clicking
+            gs.deleteMode = true;
+            deleteSquare(e);
+        }
     }
-    // place mode
-    if (!ac.spaceDown) { 
-        gs.placeMode = true;
-        placeSquare(e);
+    if (e.buttons === 2) { // right click
+
     }
 }
 
 // this function resets gamestates and active controls
 function onPointerUp(e) { 
-    ac.holdclick = false;
-    if (gs.dragging) {
-        gs.dragging = false;
-        initialPinchDistance = null;
-        lastZoom = cameraZoom;
+    console.log(e.buttons, e.isPrimary);
+    if (e.buttons === 0) { // if left click
+        ac.holdLclick = false;
+        if (gs.dragging) {
+            gs.dragging = false;
+            initialPinchDistance = null;
+            lastZoom = cameraZoom;
+        }
+        if (gs.placeMode) gs.placeMode = !gs.placeMode;
+        if (gs.deleteMode) gs.deleteMode = !gs.deleteMode;
     }
-    if (gs.placeMode) gs.placeMode = !gs.placeMode;
 }
 
 // this function checks gamestates
@@ -114,6 +130,9 @@ function onPointerMove(e) {
     }
     if (gs.placeMode) {
         placeSquare(e);
+    }
+    if (gs.deleteMode) {
+        deleteSquare(e);
     }
 }
 
@@ -181,6 +200,16 @@ function placeSquare(e) {
     let by = calcBoxDistance(dy);
     // console.log("expected coordinates.", bx, by); 
     g.living.set(`${bx},${by}`, new Square(bx, by, 'blue'));
+}
+
+function deleteSquare(e) {
+    let x = e.clientX, y = e.clientY;
+    let d = originDistanceFromDrawOrigin();
+    let dx = d.x - x, dy = d.y - y;
+    let bx = calcBoxDistance(dx);
+    let by = calcBoxDistance(dy);
+    // console.log("expected coordinates.", bx, by); 
+    g.living.delete(`${bx},${by}`);
 }
 
 function originDistanceFromDrawOrigin() {
