@@ -1,0 +1,5 @@
+Objectives:
+
+* Only render objects inside the viewport
+* Cells that were created in one stage and deleted in the same stage should not leave a body
+* Add a GUI
