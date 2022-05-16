@@ -82,7 +82,6 @@ function getEventLocation(e) {
 
 // this function sets game states
 function onPointerDown(e) {
-    console.log(e);
     if (e.buttons === 1) { // if left click
         ac.holdLclick = true;
         // drag mode
@@ -209,7 +208,8 @@ function deleteSquare(e) {
     let bx = calcBoxDistance(dx);
     let by = calcBoxDistance(dy);
     // console.log("expected coordinates.", bx, by); 
-    g.living.delete(`${bx},${by}`);
+    let sq = g.living.get(`${bx},${by}`);
+    if (sq !== undefined) sq.kill();
 }
 
 function originDistanceFromDrawOrigin() {

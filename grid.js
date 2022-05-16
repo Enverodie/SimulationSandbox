@@ -1,18 +1,21 @@
 const g = {
+    stage : 0,
+    dead : new Map(),
     living : new Map(),
     nextGen : new Map(),
     calcNextGen : function() {
         for (square of g.living.values()) {
             square.testAll();
         }
-        g.living = new Map(g.nextGen);
-        g.nextGen.clear();
     },
     runLoop : function() {
         const loopTime = 100;
         if (gs.playing) setTimeout(() => {
             if (gs.playing) {
                 this.calcNextGen();
+                g.living = new Map(g.nextGen);
+                g.nextGen.clear();
+                g.stage++;
                 g.runLoop();
             } 
         }, loopTime);
@@ -20,6 +23,7 @@ const g = {
     reset : function() {
         g.living.clear();
         g.nextGen.clear();
+        g.dead.clear();
     }
 }
 

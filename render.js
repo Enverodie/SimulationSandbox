@@ -33,6 +33,9 @@ function drawGrid() {
 function drawSquares() {
     ctx.save();
     ctx.scale(scale, scale);
+    for (s of g.dead.values()) {
+        s.draw();
+    }
     for (s of g.living.values()) {
         s.draw();
     }

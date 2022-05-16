@@ -1,3 +1,5 @@
+// import colorToObj, { CSS_COLORS } from "./cssColors";
+
 function Square(x, y, color, type, sphereOfInfluence, surviveCondition, extraSurviveConditions, reproduceRule) {
 
     // optional properties (and defaults)
@@ -65,6 +67,7 @@ function Square(x, y, color, type, sphereOfInfluence, surviveCondition, extraSur
 
     this.testSurvival = function() {
         if (this.canSurvive()) g.nextGen.set(`${this.x},${this.y}`, this);
+        else this.kill(false);
     }
     this.testReproduction = function () {
         for (cstring of this.sphereOfInfluence(this.x, this.y)) {
@@ -72,6 +75,7 @@ function Square(x, y, color, type, sphereOfInfluence, surviveCondition, extraSur
                 let c = dissectCoord(cstring);
                 let x1 = c.x, y1 = c.y;
                 let sq = new Square(x1, y1, this.color, this.type, this.sphereOfInfluence, this.surviveCondition, this.extraSurviveConditions, this.reproduceRule);
+                removeFromDeaths(sq); // just in case this coordinate had died previously
                 g.nextGen.set(cstring, sq);
             };
         }
@@ -81,6 +85,50 @@ function Square(x, y, color, type, sphereOfInfluence, surviveCondition, extraSur
         this.testReproduction();
     }
 
+    this.kill = function(hardkill = true) {
+        addToDeaths(this);
+        if (hardkill) g.living.delete(`${this.x},${this.y}`);
+    }
+
+}
+
+function addToDeaths(square) {
+    let coord = `${square.x},${square.y}`; 
+    let deadSquare = new DeadSquare(square.x, square.y, square.color);
+    g.dead.set(coord, deadSquare);
+}
+
+function removeFromDeaths(square) {
+    g.dead.delete(`${square.x},${square.y}`);
+}
+
+function DeadSquare(x, y, color) {
+    this.x = x;
+    this.y = y;
+    this.color = color; // the same as the color of the living cell
+    this.deathStage = g.stage; // when this object is created, keep track of the stage it died in to keep track of how long ago it died
+    this.draw = function() {
+        const cS = 25; // color subtraction value
+        const minOpacity = .075;
+        const deathPenalty = .5;
+        
+        let cObj = colorToObj(this.color);
+        let deathTime = g.stage - this.deathStage; // how many ticks have passed since this has died
+        if (deathTime < 1) deathTime = 1;
+
+        let opacityDelta = 1/Math.pow(deathTime, 1/(2 * (1 + cObj.a)));
+        opacityDelta -= deathPenalty;
+
+        let dC = { 
+            r: Math.max( (cObj.r - cS), 0), 
+            g: Math.max( (cObj.g - cS), 0), 
+            b: Math.max( (cObj.b - cS), 0), 
+            a: Math.max( opacityDelta, minOpacity, 0),
+        }; // darkened colors
+
+        ctx.fillStyle = `rgba(${dC.r},${dC.g},${dC.b},${dC.a})`;
+        ctx.fillRect(this.x, this.y, 1, 1);
+    }
 }
 
 // pass a coordinate string, get an object with the numbers
