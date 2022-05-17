@@ -10,14 +10,13 @@ const g = {
     },
     runLoop : function() {
         const loopTime = 100;
-        if (gs.playing) setTimeout(() => {
+        let id = setInterval(() => {
             if (gs.playing) {
                 this.calcNextGen();
                 g.living = new Map(g.nextGen);
                 g.nextGen.clear();
-                g.stage++;
-                g.runLoop();
-            } 
+                g.stage++;            } 
+            else clearInterval(id);
         }, loopTime);
     },
     reset : function() {
