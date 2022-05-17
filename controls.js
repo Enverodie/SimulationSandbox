@@ -18,7 +18,7 @@ const as = {
 function handleKeypress(press) {
     switch(press.key) {
         case 'r': // reset
-            g.reset();
+            reset();
             break;
         case 's': // start/stop
             playPause();
@@ -43,7 +43,7 @@ function handleKeydownUp(press) {
 function playPause() {
     as.playing = !as.playing;
     if (as.playing) {
-        g.runLoop(); // needs to be restarted
+        runLoop(); // needs to be restarted
     }
 }
 
@@ -199,7 +199,7 @@ function placeSquare(e) {
     let bx = calcBoxDistance(dx);
     let by = calcBoxDistance(dy);
     // g.living.set(`${bx},${by}`, new Square(bx, by, 'blue'));
-    g.createSquareOfType('conway', bx, by, as.placeColor);
+    createSquareOfType('conway', bx, by, as.placeColor);
 }
 
 function deleteSquare(e) {

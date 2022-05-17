@@ -1,7 +1,6 @@
 Objectives:
 
 * Add a GUI
-* Move the game logic (most of the grid functions) out of the grid and into a separate file. This way, the grid object can be the only thing that needs preserved and reloaded on saves and loads.
 * Add support for multiple lifeforms
 * Add support for different lifeform tick speed
 * Add conflict
