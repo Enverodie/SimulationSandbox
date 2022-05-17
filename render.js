@@ -14,11 +14,11 @@ let MIN_ZOOM = 0.05
 let SCROLL_SENSITIVITY = 0.001
 
 // TODO: make this infinite
-function drawGrid() {
-    const thickness = .075;
+function drawGrid(opacity = .2) {
+    const thickness = .035;
     ctx.save();
 
-    ctx.fillStyle = 'gray';
+    ctx.fillStyle = `rgba(125, 125, 125, ${opacity})`;
     ctx.scale(scale, scale);
     for (let i = -canvas.width; i <= canvas.width; i++) { // draw vertical lines
         ctx.fillRect(i-(thickness/2), -canvas.height, thickness, 2*canvas.height);
@@ -44,6 +44,7 @@ function drawSquares() {
 
 function drawAll() {
     sizeCanvas();
+    setBackgroundColor("black");
     
     // Makes the zoom work
     setScrollEffect(true);
@@ -51,12 +52,12 @@ function drawAll() {
 
     ctx.translate(cameraOffset.x, cameraOffset.y); // translates to the current camera offset
     
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); // clear the screen
+    // ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); // clear the screen
     ctx.save();
 
 
     drawSquares();
-    drawGrid();
+    drawGrid(.15);
 
 
     ctx.translate(-cameraOffset.x, -cameraOffset.y);
@@ -69,6 +70,14 @@ function drawAll() {
     requestAnimationFrame(drawAll);
 }
 drawAll();
+
+function setBackgroundColor(color) {
+    if (!color) return;
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+}
 
 function setScrollEffect(value) {
     if (value) {
