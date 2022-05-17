@@ -10,6 +10,7 @@ const as = {
     playing     : false,
     placeMode   : false,
     deleteMode  : false,
+    placeColor  : 'red',
 }
 
 // handle keyboard inputs
@@ -197,8 +198,8 @@ function placeSquare(e) {
     let dx = d.x - x, dy = d.y - y;
     let bx = calcBoxDistance(dx);
     let by = calcBoxDistance(dy);
-    // console.log("expected coordinates.", bx, by); 
-    g.living.set(`${bx},${by}`, new Square(bx, by, 'blue'));
+    // g.living.set(`${bx},${by}`, new Square(bx, by, 'blue'));
+    g.createSquareOfType('conway', bx, by, as.placeColor);
 }
 
 function deleteSquare(e) {

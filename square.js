@@ -1,10 +1,10 @@
 // import colorToObj, { CSS_COLORS } from "./cssColors";
 
-function Square(x, y, color, type, sphereOfInfluence, surviveCondition, extraSurviveConditions, reproduceRule) {
+function Square(x, y, color, type, sphereOfInfluence, surviveCondition, extraSurviveConditions, reproduceRule, starterHealthAttack) {
 
     // optional properties (and defaults)
 
-    this.type = type || "Conway";
+    this.type = type || "conway";
     this.sphereOfInfluence = sphereOfInfluence || ((x1, y1) => {
         return [
             `${x1-1},${y1+1}`,
@@ -42,14 +42,17 @@ function Square(x, y, color, type, sphereOfInfluence, surviveCondition, extraSur
         if (count === 3) return true;
         else return false;
     });
-
+    this.originalHA = starterHealthAttack || 1; // this variable is just passed down the generations - it is not modified.
+    
     // general properties
-
+    
     this.x = x;
     this.y = y;
     this.color = color;
-
+    
     // derived properties
+    
+    this.HA = this.originalHA; // this variable IS modified whenever a cell takes a "hit".
 
     this.draw = function() {
         ctx.fillStyle = this.color;
@@ -74,7 +77,7 @@ function Square(x, y, color, type, sphereOfInfluence, surviveCondition, extraSur
             if (this.reproduceRule(this.sphereOfInfluence, cstring)) {
                 let c = dissectCoord(cstring);
                 let x1 = c.x, y1 = c.y;
-                let sq = new Square(x1, y1, this.color, this.type, this.sphereOfInfluence, this.surviveCondition, this.extraSurviveConditions, this.reproduceRule);
+                let sq = new Square(x1, y1, this.color, this.type, this.sphereOfInfluence, this.surviveCondition, this.extraSurviveConditions, this.reproduceRule, this.originalHA);
                 removeFromDeaths(sq); // just in case this coordinate had died previously
                 g.nextGen.set(cstring, sq);
             };

@@ -3,6 +3,7 @@ const g = {
     dead : new Map(),
     living : new Map(),
     nextGen : new Map(),
+    createdLifeforms : [new Square(null, null, null)], // start with one available lifeform: conway
     calcNextGen : function() {
         for (square of g.living.values()) {
             square.testAll();
@@ -23,125 +24,38 @@ const g = {
         g.living.clear();
         g.nextGen.clear();
         g.dead.clear();
+    },
+    addNewLifeform: function(type, sphereOfInfluence, surviveCondition, extraSurviveConditions, reproduceRule, starterHealthAttack) {
+        // right here would be a good place to check if the lifeform already exists
+        let lf = new Square(null, null, null, type, sphereOfInfluence, surviveCondition, extraSurviveConditions, reproduceRule, starterHealthAttack);
+        this.createdLifeforms.push(lf);
+    },
+    selectLifeform: function(type) {
+        function extractUseful(square) {
+            return {
+                type: square.type, 
+                sphereOfInfluence: square.sphereOfInfluence, 
+                surviveCondition: square.surviveCondition, 
+                extraSurviveConditions: square.extraSurviveConditions, 
+                reproduceRule: square.reproduceRule,
+                starterHealthAttack: square.starterHealthAttack,
+            };
+        }
+        let arr = this.createdLifeforms.filter(function(e) {return e.type === type})
+        let lf = arr[0];
+        if (arr.length > 0) {
+            return extractUseful(lf);
+        }
+        else {
+            console.warn("Lifeform of type " + type + " not found!");
+            return null; // could also return the first lifeform created
+        } 
+    },
+    createSquareOfType: function(type, x, y, color) {
+        let stats = this.selectLifeform(type);
+        let ns = new Square(x, y, color, type, stats.sphereOfInfluence, stats.surviveCondition, stats.extraSurviveConditions, stats.reproduceRule, stats.starterHealthAttack);
+        this.living.set(`${x},${y}`, ns);
     }
+    // conflictResolve: function()
 }
 
-// lazy initialization
-function lazyInitGoL() {
-    /*
-    for (let i = 0; i < 1000; i++) {
-        const spawnRange = 50;
-        let coordinate1 = Math.floor(Math.random() * spawnRange);
-        let coordinate2 = Math.floor(Math.random() * spawnRange);
-        g.living.set(`${coordinate1},${coordinate2}`, new Square(coordinate1, coordinate2, 'blue'))
-    }
-    lazyBlinker(10, 10);
-    lazyBeacon(16, 10);
-    lazyPentaDecathlon(32, 10);
-    */
-//    g.living.set('0,0', new Square(0,0, 'blue'));
-//    g.living.set('95,0', new Square(95,0, 'blue'));
-//    g.living.set('0,47', new Square(0,47, 'blue'));
-//    g.living.set('95,47', new Square(95,47, 'blue'));
-   g.runLoop();
-}
-lazyInitGoL();
-
-// Test structures for GoL
-
-function lazyBlinker(xcenter, ycenter) {
-    const color = 'rgb(155, 0, 0)';
-    g.living.set(`${xcenter - 1},${ycenter}`, new Square(xcenter - 1, ycenter, color));
-    g.living.set(`${xcenter    },${ycenter}`, new Square(xcenter    , ycenter, color));
-    g.living.set(`${xcenter + 1},${ycenter}`, new Square(xcenter + 1, ycenter, color));
-}
-
-function lazyBeacon(xtop, ytop) {
-    const color = 'red';
-    g.living.set(`${xtop},${ytop}`, new Square(xtop, ytop, color));
-    g.living.set(`${xtop},${ytop-1}`, new Square(xtop, ytop-1, color));
-    g.living.set(`${xtop+1},${ytop}`, new Square(xtop+1, ytop, color));
-    
-    g.living.set(`${xtop+3},${ytop-3}`, new Square(xtop+3, ytop-3, color));
-    g.living.set(`${xtop+2},${ytop-3}`, new Square(xtop+2, ytop-3, color));
-    g.living.set(`${xtop+3},${ytop-2}`, new Square(xtop+3, ytop-2, color));   
-}
-
-function lazyPentaDecathlon(xcenter, ytop) {
-    const color = 'green';
-    var x = xcenter - 1, y = ytop;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter, y = ytop;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter + 1, y = ytop;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    
-    var x = xcenter, y = ytop - 1;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter, y = ytop - 2;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    
-    var x = xcenter - 1, y = ytop - 3;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter, y = ytop - 3;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter + 1, y = ytop - 3;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    
-    var x = xcenter - 1, y = ytop - 5;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter, y = ytop - 5;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter + 1, y = ytop - 5;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter - 1, y = ytop - 6;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter, y = ytop - 6;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter + 1, y = ytop - 6;
-    g.living.set(`${x},${y}`, new Square(x, y, color));  
-    
-    var bottom = 8;
-    var x = xcenter - 1, y = ytop - bottom;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter, y = ytop - bottom;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter + 1, y = ytop - bottom;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    
-    var x = xcenter, y = ytop - 1 - bottom;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter, y = ytop - 2 - bottom;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    
-    var x = xcenter - 1, y = ytop - 3 - bottom;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter, y = ytop - 3 - bottom;
-    g.living.set(`${x},${y}`, new Square(x, y, color));   
-    var x = xcenter + 1, y = ytop - 3 - bottom;
-    g.living.set(`${x},${y}`, new Square(x, y, color));  
-}
-
-// not currently in use
-
-// checks if two objects have the same keys
-function compareKeys(obj1, obj2) {
-    const akeys = Object.keys(obj1).sort();
-    const bkeys = Object.keys(obj2).sort();
-
-    return JSON.stringify(akeys) === JSON.stringify(bkeys);
-}
-
-// checks if two objects have the same keys and values
-function shallowCompare(obj1, obj2) {
-    const keys1 = Object.keys(obj1);
-    const keys2 = Object.keys(obj2);
-
-    if (keys1.length !== keys2.length) return false;
-
-    for (let key of keys1) {
-        if (obj1[key] !== obj2[key]) return false;
-    }
-
-    return true;
-}
