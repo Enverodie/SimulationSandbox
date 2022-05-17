@@ -1,3 +1,4 @@
+const canvasContainer = document.getElementById('canvasContainer');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const coolColors = ['darkblue', 'blue', 'lightblue', 'darkcyan', 'cyan', 'lightcyan'];
@@ -52,7 +53,6 @@ function drawAll() {
 
     ctx.translate(cameraOffset.x, cameraOffset.y); // translates to the current camera offset
     
-    // ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); // clear the screen
     ctx.save();
 
 
@@ -93,8 +93,9 @@ function setScrollEffect(value) {
 }
 
 function sizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    let cDim = canvasContainer.getBoundingClientRect();
+    canvas.width = cDim.width;
+    canvas.height = cDim.height;
 }
 
 window.addEventListener('resize', sizeCanvas);
