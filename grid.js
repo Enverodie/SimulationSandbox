@@ -11,7 +11,7 @@ const g = {
     runLoop : function() {
         const loopTime = 100;
         let id = setInterval(() => {
-            if (gs.playing) {
+            if (as.playing) {
                 this.calcNextGen();
                 g.living = new Map(g.nextGen);
                 g.nextGen.clear();

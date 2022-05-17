@@ -4,8 +4,8 @@ const ac = {
     holdLclick : false,
 }
 
-// gamestate
-const gs = {
+// active state
+const as = {
     dragging    : false,
     playing     : false,
     placeMode   : false,
@@ -40,8 +40,8 @@ function handleKeydownUp(press) {
 // keyboard input helper functions
 
 function playPause() {
-    gs.playing = !gs.playing;
-    if (gs.playing) {
+    as.playing = !as.playing;
+    if (as.playing) {
         g.runLoop(); // needs to be restarted
     }
 }
@@ -86,18 +86,18 @@ function onPointerDown(e) {
         ac.holdLclick = true;
         // drag mode
         if (ac.spaceDown) {
-            gs.dragging = true;
+            as.dragging = true;
             dragStart.x = getEventLocation(e).x/cameraZoom - cameraOffset.x;
             dragStart.y = getEventLocation(e).y/cameraZoom - cameraOffset.y;
         }
         // place mode
         if (!ac.spaceDown && e.ctrlKey) { // if not holding space and control clicking
-            gs.placeMode = true;
+            as.placeMode = true;
             placeSquare(e);
         }
         // delete mode
         if (!ac.spaceDown && e.shiftKey) { // if not holding space and control clicking
-            gs.deleteMode = true;
+            as.deleteMode = true;
             deleteSquare(e);
         }
     }
@@ -111,26 +111,26 @@ function onPointerUp(e) {
     console.log(e.buttons, e.isPrimary);
     if (e.buttons === 0) { // if left click
         ac.holdLclick = false;
-        if (gs.dragging) {
-            gs.dragging = false;
+        if (as.dragging) {
+            as.dragging = false;
             initialPinchDistance = null;
             lastZoom = cameraZoom;
         }
-        if (gs.placeMode) gs.placeMode = !gs.placeMode;
-        if (gs.deleteMode) gs.deleteMode = !gs.deleteMode;
+        if (as.placeMode) as.placeMode = !as.placeMode;
+        if (as.deleteMode) as.deleteMode = !as.deleteMode;
     }
 }
 
 // this function checks gamestates
 function onPointerMove(e) {
-    if (gs.dragging) {
+    if (as.dragging) {
         cameraOffset.x = getEventLocation(e).x/cameraZoom - dragStart.x; 
         cameraOffset.y = getEventLocation(e).y/cameraZoom - dragStart.y;
     }
-    if (gs.placeMode) {
+    if (as.placeMode) {
         placeSquare(e);
     }
-    if (gs.deleteMode) {
+    if (as.deleteMode) {
         deleteSquare(e);
     }
 }
@@ -140,7 +140,7 @@ function handleTouch(e, singleTouchHandler) {
         singleTouchHandler(e)
     }
     else if (e.type == "touchmove" && e.touches.length == 2) {
-        gs.dragging = false
+        as.dragging = false
         handlePinch(e)
     }
 }
@@ -166,7 +166,7 @@ function handlePinch(e) {
 }
 
 function adjustZoom(zoomAmount, zoomFactor) {
-    if (!gs.dragging) {
+    if (!as.dragging) {
         if (zoomAmount) {
             cameraZoom -= zoomAmount
         }
