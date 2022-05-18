@@ -1,3 +1,8 @@
+// cursor control classes
+const canGrab = "canGrab";
+const isGrabbing = "isGrabbing";
+const canPlace = "canPlace";
+
 // active controls
 const ac = { 
     spaceDown : false,
@@ -10,7 +15,7 @@ const as = {
     playing     : false,
     placeMode   : false,
     deleteMode  : false,
-    placeColor  : 'red',
+    placeColor  : document.getElementById('currentPlaceColor').value,
 }
 
 // handle keyboard inputs
@@ -29,12 +34,33 @@ function handleKeypress(press) {
 }
 
 function handleKeydownUp(press) {
-    switch(press.key) {
-        case ' ':
-            spaceDownOnOff(press);
-            break;
-        default:
-            break;
+    if (press.type == "keydown") {
+
+        switch(press.key) {
+            case ' ':
+                ac.spaceDown = true;
+                canvas.classList.add(canGrab);
+                break;
+            case 'Control':
+                canvas.classList.add(canPlace);
+                break;
+            default:
+                break;
+        }
+    }
+    else {
+
+        switch(press.key) {
+            case ' ':
+                ac.spaceDown = false;
+                canvas.classList.remove(canGrab);
+                break;
+            case 'Control':
+                canvas.classList.remove(canPlace);
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -45,22 +71,6 @@ function playPause() {
     if (as.playing) {
         runLoop(); // needs to be restarted
     }
-}
-
-// toggles the ability to drag the canvas
-function spaceDownOnOff(e) {
-    if (e.type == 'keydown') {
-        canvas.style.cursor = "grab";
-        ac.spaceDown = true;
-    } 
-    else if (e.type == 'keyup') {
-        canvas.style.cursor = "auto";
-        ac.spaceDown = false;
-    } 
-    else {
-        console.error(`event ${e} is not a valid spaceDownOnOff argument.`);
-        return;
-    } 
 }
 
 document.addEventListener('keypress', handleKeypress);
@@ -88,6 +98,7 @@ function onPointerDown(e) {
         // drag mode
         if (ac.spaceDown) {
             as.dragging = true;
+            canvas.classList.add(isGrabbing);
             dragStart.x = getEventLocation(e).x/cameraZoom - cameraOffset.x;
             dragStart.y = getEventLocation(e).y/cameraZoom - cameraOffset.y;
         }
@@ -109,11 +120,12 @@ function onPointerDown(e) {
 
 // this function resets gamestates and active controls
 function onPointerUp(e) { 
-    console.log(e.buttons, e.isPrimary);
+    // console.log(e.buttons, e.isPrimary);
     if (e.buttons === 0) { // if left click
         ac.holdLclick = false;
         if (as.dragging) {
             as.dragging = false;
+            canvas.classList.remove(isGrabbing);
             initialPinchDistance = null;
             lastZoom = cameraZoom;
         }
