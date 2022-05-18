@@ -15,6 +15,8 @@
                 --mainWidth: 0%;
                 --bgColor: hsl(260deg, 84%, 11%);
                 --hamburgerHideControlsMargin: .6rem;
+                --txtColor: hsl(230deg, 40%, 86%);
+                --standardTransition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             }
 
             body {
@@ -37,6 +39,17 @@
                 z-index: 5;
             }
 
+            #squareInfo {
+                position: absolute;
+                background-color: var(--bgColor);
+                padding: .4rem;
+                padding-right: 1rem;
+                border-radius: .6rem;
+                color: var(--txtColor);
+
+                transition: opacity var(--standardTransition) .1s;
+            }
+
             canvas.canGrab {
                 cursor: grab;
             }
@@ -52,7 +65,7 @@
             main {
                 width: var(--mainWidth);
                 background-color: var(--bgColor);
-                color: hsl(230deg, 40%, 86%);
+                color: var(--txtColor);
             }
             
             main .border {
@@ -75,7 +88,7 @@
             }
 
             main, #canvasContainer {
-                transition: width cubic-bezier(0.25, 0.46, 0.45, 0.94) .3s;
+                transition: width var(--standardTransition) .3s;
             }
 
             main.dragging, #canvasContainer.dragging {
@@ -102,7 +115,7 @@
                 height: inherit;
                 cursor: e-resize;
 
-                transition: border cubic-bezier(0.25, 0.46, 0.45, 0.94) .1s;
+                transition: border var(--standardTransition) .1s;
             }
             
             #dragMainBox:hover {

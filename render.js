@@ -59,6 +59,8 @@ function drawAll() {
     drawSquares();
     drawGrid(.15);
 
+    // addHTMLInfoPanel(); // adds an HTML element describing the square currently hovered on
+
 
     ctx.translate(-cameraOffset.x, -cameraOffset.y);
     // everything drawn here will be immune to moving (but not scrolling)

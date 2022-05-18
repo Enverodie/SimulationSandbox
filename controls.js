@@ -1,15 +1,24 @@
-// cursor control classes
+// cursor control class names
 const canGrab = "canGrab";
 const isGrabbing = "isGrabbing";
 const canPlace = "canPlace";
+const squareInfo = "squareInfo";
 
 // active controls
+/*  Active controls describes which button is currently being held,
+    particularly in the case that some other event may be triggered with a combination of button presses
+    */
 const ac = { 
+    mousePosition : {x: 0, y: 0}, // current mouse position, updated with move listeners
     spaceDown : false,
     holdLclick : false,
 }
 
 // active state
+/*  Active controls describes which "states" are currently active,
+    particularly when multiple buttons are being held at once and/or separate
+    event listeners need to keep track of the same thing happening. 
+    */
 const as = {
     dragging    : false,
     playing     : false,
@@ -20,6 +29,7 @@ const as = {
 
 // handle keyboard inputs
 
+// this function handles tap inputs
 function handleKeypress(press) {
     switch(press.key) {
         case 'r': // reset
@@ -33,6 +43,7 @@ function handleKeypress(press) {
     }
 }
 
+// this function handles whenever a key is pushed and held (down) or (up)
 function handleKeydownUp(press) {
     if (press.type == "keydown") {
 
@@ -48,7 +59,7 @@ function handleKeydownUp(press) {
                 break;
         }
     }
-    else {
+    else { // keyup
 
         switch(press.key) {
             case ' ':
@@ -79,7 +90,7 @@ document.addEventListener('keyup', handleKeydownUp);
 
 let dragStart = { x: 0, y: 0 }
 
-// mouse event handlers
+// mouse event handlers & helpers
 
 // Gets the relevant location from a mouse or single touch event
 function getEventLocation(e) {
@@ -91,7 +102,7 @@ function getEventLocation(e) {
     }
 }
 
-// this function sets game states
+// this function sets game states. When the pointer is pressed down.
 function onPointerDown(e) {
     if (e.buttons === 1) { // if left click
         ac.holdLclick = true;
@@ -118,7 +129,7 @@ function onPointerDown(e) {
     }
 }
 
-// this function resets gamestates and active controls
+// This function resets gamestates and active controls. When the mouse press/hold is done.
 function onPointerUp(e) { 
     // console.log(e.buttons, e.isPrimary);
     if (e.buttons === 0) { // if left click
@@ -134,8 +145,10 @@ function onPointerUp(e) {
     }
 }
 
-// this function checks gamestates
+// This function checks gamestates. Whenever the mouse is moved, period.
 function onPointerMove(e) {
+    e = getEventLocation(e);
+    ac.mousePosition = {x: e.x, y: e.y};
     if (as.dragging) {
         cameraOffset.x = getEventLocation(e).x/cameraZoom - dragStart.x; 
         cameraOffset.y = getEventLocation(e).y/cameraZoom - dragStart.y;
@@ -146,7 +159,12 @@ function onPointerMove(e) {
     if (as.deleteMode) {
         deleteSquare(e);
     }
+    if (!(as.dragging || as.placeMode || as.deleteMode)) {
+        addHTMLInfoPanel();
+    }
 }
+
+// touchscreen compatability functions
 
 function handleTouch(e, singleTouchHandler) {
     if ( e.touches.length == 1 ) {
@@ -178,6 +196,7 @@ function handlePinch(e) {
     }
 }
 
+// controls the zoom
 function adjustZoom(zoomAmount, zoomFactor) {
     if (!as.dragging) {
         if (zoomAmount) {
@@ -204,24 +223,27 @@ canvas.addEventListener('wheel', (e) => adjustZoom(e.deltaY*SCROLL_SENSITIVITY))
 
 // mouse event listener helper functions
 
-function placeSquare(e) {
-    let x = e.clientX, y = e.clientY;
+// returns the square within any given viewport coordinate, or undefined if it isn't alive
+function findLiveSquare(x, y) {
     let d = originDistanceFromDrawOrigin();
     let dx = d.x - x, dy = d.y - y;
     let bx = calcBoxDistance(dx);
     let by = calcBoxDistance(dy);
-    // g.living.set(`${bx},${by}`, new Square(bx, by, 'blue'));
+    return g.living.get(`${bx},${by}`);
+}
+
+function placeSquare(e) {
+    let x = e.x, y = e.y;
+    let d = originDistanceFromDrawOrigin();
+    let dx = d.x - x, dy = d.y - y;
+    let bx = calcBoxDistance(dx);
+    let by = calcBoxDistance(dy);
     createSquareOfType('conway', bx, by, as.placeColor);
 }
 
 function deleteSquare(e) {
-    let x = e.clientX, y = e.clientY;
-    let d = originDistanceFromDrawOrigin();
-    let dx = d.x - x, dy = d.y - y;
-    let bx = calcBoxDistance(dx);
-    let by = calcBoxDistance(dy);
-    // console.log("expected coordinates.", bx, by); 
-    let sq = g.living.get(`${bx},${by}`);
+    let x = e.x, y = e.y;
+    let sq = findLiveSquare(x, y);
     if (sq !== undefined) sq.kill();
 }
 
@@ -231,10 +253,37 @@ function originDistanceFromDrawOrigin() {
     let pxDistY = ((cameraOffset.y*cameraZoom)-(sOrigY)*cameraZoom+sOrigY);
     let bxDistX = calcBoxDistance(pxDistX);
     let bxDistY = calcBoxDistance(pxDistY);
-    console.warn( pxDistX, pxDistY, bxDistX, bxDistY );
     return {x : pxDistX, y: pxDistY, xb: bxDistX, yb: bxDistY};
 }
 
 function calcBoxDistance(pixelDistance) {
     return -Math.ceil(pixelDistance / (scale * cameraZoom));
+}
+
+function addHTMLInfoPanel() {
+    const maxOpacity = .8;
+    const remSpacing = .6;
+    let sq = findLiveSquare(ac.mousePosition.x, ac.mousePosition.y);
+    let element = document.getElementById('squareInfo');
+    let needsAppended = false;
+    if (element == null) { // no element has been created yet to show the info
+        element = document.createElement('div');
+        element.setAttribute('id', squareInfo);
+        needsAppended = true;
+    }
+    if (sq === undefined) { // no square is alive in this case
+        element.style.opacity = "0";
+        // if (needsAppended) document.getElementById('canvasContainer').appendChild(element);
+        return;
+    }
+    element.innerHTML = `
+        <ul>
+            <li>Type: ${sq.type}</li>
+            <li>Color: ${sq.color}</li>
+            <li>Health-Attack: ${sq.HA}/${sq.originalHA}</li>
+        </ul>`;
+    element.style.left = `calc(${ac.mousePosition.x}px + ${remSpacing}rem)`;
+    element.style.top = `calc(${ac.mousePosition.y}px - ${remSpacing}rem - ${element.getBoundingClientRect().height}px)`;
+    if (sq !== undefined) element.style.opacity = maxOpacity + "";
+    if (needsAppended) document.getElementById('canvasContainer').appendChild(element);
 }

@@ -1,5 +1,6 @@
 Objectives:
 
+* Make info panel work with moving cells
 * Add support for multiple lifeforms
 * Add support for different lifeform tick speed
 * Add conflict
