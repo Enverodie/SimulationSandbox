@@ -8,6 +8,7 @@
         <script src="grid.js" defer></script>
         <script src="render.js" defer></script>
         <script src="controls.js" defer></script>
+        <script src="index.js" defer></script>
         <!-- <script src="test.js" defer></script> -->
         <style>
             :root {
@@ -81,7 +82,7 @@
                 transition: width 0s linear;
             }
 
-            .hideControls {
+            .hideMain {
                 position: absolute;
                 top: 0;
                 right: 0;
@@ -113,50 +114,8 @@
     <body>
         <div id="canvasContainer">
             <canvas id="canvas"></canvas>
-            <script>
-                function toggleMainView(percent = '20%') {
-                    const percentThreshold = 3;
-                    const element = document.querySelector(":root");
-                    const property = '--mainWidth';
-                    let ps = getComputedStyle(element).getPropertyValue(property);
-                    Number.parseFloat(ps.substring(0, ps.length - 1)) <= percentThreshold ? element.style.setProperty(property, percent) : element.style.setProperty(property, '0%');
-                }
-                
-                function setMainView(percent) {
-                    const element = document.querySelector(":root");
-                    const property = '--mainWidth';
-                    let ps = getComputedStyle(element).getPropertyValue(property);
-                    element.style.setProperty(property, percent);
-                }
-            </script>
             <div id="dragMainBox"></div>
-            <script>
-                let isDraggingMain = false;
-                function resizeMain(move) {
-                    if (!isDraggingMain) return;
-                    let x = move.clientX, wX = window.innerWidth;
-                    let percent = x / wX;
-                    percent = 1 - percent;
-                    percent *= 100;
-                    setMainView(percent + "%");
-                }
-
-                let mainDragger = document.getElementById('dragMainBox');
-                mainDragger.addEventListener('mousedown', () => {
-                    isDraggingMain = true;
-                    document.querySelector('main').classList.add("dragging");
-                    document.getElementById('canvasContainer').classList.add("dragging");
-                });
-                document.addEventListener('mouseup', () => {
-                    if (isDraggingMain) {
-                        document.querySelector('main').classList.remove("dragging");
-                        document.getElementById('canvasContainer').classList.remove("dragging");
-                    }
-                    isDraggingMain = false
-                });
-                document.addEventListener('mousemove', e => resizeMain(e));
-            </script>
-            <button class="hideControls" onclick="toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg"></button>
+            <button class="hideMain" onclick="toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg"></button>
         </div>
         <main>
             <div class="border">
