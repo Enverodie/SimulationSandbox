@@ -12,13 +12,17 @@
         <style>
             :root {
                 --mainWidth: 0%;
+                --bgColor: hsl(260deg, 84%, 11%);
+                --hamburgerHideControlsMargin: .6rem;
             }
 
             body {
+                background-color: var(--bgColor);
                 margin: 0;
                 display: flex;
                 width: 100vw;
-
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+                overflow-x: hidden;
             }
 
             #canvasContainer {
@@ -28,15 +32,32 @@
                 padding: 0;
                 border: 0;
                 position: relative;
+                /* overflow-x: hidden; */
+                z-index: 5;
             }
 
             main {
                 width: var(--mainWidth);
-                overflow-x: hidden;
+                background-color: var(--bgColor);
+                color: hsl(230deg, 40%, 86%);
+            }
+            
+            main .border {
+                border-left: solid .5vw hsl(260deg, 84%, 20%);
+                box-sizing: border-box;
+                min-height: 100vh;
+            }
+
+            .mainContent {
+                padding: 1rem;
             }
 
             main, #canvasContainer {
                 transition: width cubic-bezier(0.25, 0.46, 0.45, 0.94) .3s;
+            }
+
+            main.dragging, #canvasContainer.dragging {
+                transition: width 0s linear;
             }
 
             .hideControls {
@@ -44,7 +65,26 @@
                 top: 0;
                 right: 0;
                 padding: .3rem;
-                margin: .5rem;
+                margin: var(--hamburgerHideControlsMargin);
+                margin-right: calc(1.5 * var(--hamburgerHideControlsMargin));
+            }
+
+            #dragMainBox {
+                position: absolute;
+                top: 0;
+                right: calc(0rem - var(--hamburgerHideControlsMargin));
+                /* background-color: red; */
+                box-sizing: border-box;
+                border: none;
+                width: calc(2 * var(--hamburgerHideControlsMargin));
+                height: inherit;
+                
+                transition: border cubic-bezier(0.25, 0.46, 0.45, 0.94) .1s;
+            }
+            
+            #dragMainBox:hover {
+                border-right: 1px solid cyan;
+                border-left: 1px solid cyan;
             }
         </style>
     </head>
@@ -52,19 +92,55 @@
         <div id="canvasContainer">
             <canvas id="canvas"></canvas>
             <script>
-                function toggleMainView() {
+                function toggleMainView(percent = '20%') {
+                    const percentThreshold = 3;
                     const element = document.querySelector(":root");
                     const property = '--mainWidth';
-                    const defaultExtension = '20%';
                     let ps = getComputedStyle(element).getPropertyValue(property);
-                    ps === '0%' ? element.style.setProperty(property, defaultExtension) : element.style.setProperty(property, '0%');
+                    Number.parseFloat(ps.substring(0, ps.length - 1)) <= percentThreshold ? element.style.setProperty(property, percent) : element.style.setProperty(property, '0%');
                 }
+                
+                function setMainView(percent) {
+                    const element = document.querySelector(":root");
+                    const property = '--mainWidth';
+                    let ps = getComputedStyle(element).getPropertyValue(property);
+                    element.style.setProperty(property, percent);
+                }
+            </script>
+            <div id="dragMainBox"></div>
+            <script>
+                let isDraggingMain = false;
+                function resizeMain(move) {
+                    if (!isDraggingMain) return;
+                    let x = move.clientX, wX = window.innerWidth;
+                    let percent = x / wX;
+                    percent = 1 - percent;
+                    percent *= 100;
+                    setMainView(percent + "%");
+                }
+
+                let mainDragger = document.getElementById('dragMainBox');
+                mainDragger.addEventListener('mousedown', () => {
+                    isDraggingMain = true;
+                    document.querySelector('main').classList.add("dragging");
+                    document.getElementById('canvasContainer').classList.add("dragging");
+                });
+                document.addEventListener('mouseup', () => {
+                    if (isDraggingMain) {
+                        document.querySelector('main').classList.remove("dragging");
+                        document.getElementById('canvasContainer').classList.remove("dragging");
+                    }
+                    isDraggingMain = false
+                });
+                document.addEventListener('mousemove', e => resizeMain(e));
             </script>
             <button class="hideControls" onclick="toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg"></button>
         </div>
         <main>
-            <div class="controls">
-                <h1>Hello</h1>
+            <div class="border mainContent">
+                <div class="controls">
+                    <h1>Hello</h1>
+                </div>
             </div>
         </main>
     </body>
