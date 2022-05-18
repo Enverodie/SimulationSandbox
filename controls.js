@@ -2,14 +2,12 @@
 const canGrab = "canGrab";
 const isGrabbing = "isGrabbing";
 const canPlace = "canPlace";
-const squareInfo = "squareInfo";
 
 // active controls
 /*  Active controls describes which button is currently being held,
     particularly in the case that some other event may be triggered with a combination of button presses
     */
 const ac = { 
-    mousePosition : {x: 0, y: 0}, // current mouse position, updated with move listeners
     spaceDown : false,
     holdLclick : false,
 }
@@ -148,7 +146,8 @@ function onPointerUp(e) {
 // This function checks gamestates. Whenever the mouse is moved, period.
 function onPointerMove(e) {
     e = getEventLocation(e);
-    ac.mousePosition = {x: e.x, y: e.y};
+    previousCoord = {x: e.x, y: e.y};
+    console.log("This is p: ", previousCoord);
     if (as.dragging) {
         cameraOffset.x = getEventLocation(e).x/cameraZoom - dragStart.x; 
         cameraOffset.y = getEventLocation(e).y/cameraZoom - dragStart.y;
@@ -158,9 +157,6 @@ function onPointerMove(e) {
     }
     if (as.deleteMode) {
         deleteSquare(e);
-    }
-    if (!(as.dragging || as.placeMode || as.deleteMode)) {
-        addHTMLInfoPanel();
     }
 }
 
@@ -223,15 +219,6 @@ canvas.addEventListener('wheel', (e) => adjustZoom(e.deltaY*SCROLL_SENSITIVITY))
 
 // mouse event listener helper functions
 
-// returns the square within any given viewport coordinate, or undefined if it isn't alive
-function findLiveSquare(x, y) {
-    let d = originDistanceFromDrawOrigin();
-    let dx = d.x - x, dy = d.y - y;
-    let bx = calcBoxDistance(dx);
-    let by = calcBoxDistance(dy);
-    return g.living.get(`${bx},${by}`);
-}
-
 function placeSquare(e) {
     let x = e.x, y = e.y;
     let d = originDistanceFromDrawOrigin();
@@ -245,45 +232,4 @@ function deleteSquare(e) {
     let x = e.x, y = e.y;
     let sq = findLiveSquare(x, y);
     if (sq !== undefined) sq.kill();
-}
-
-function originDistanceFromDrawOrigin() {
-    let sOrigX = canvas.width/2, sOrigY = canvas.height/2;
-    let pxDistX = ((cameraOffset.x*cameraZoom)-(sOrigX)*cameraZoom+sOrigX);
-    let pxDistY = ((cameraOffset.y*cameraZoom)-(sOrigY)*cameraZoom+sOrigY);
-    let bxDistX = calcBoxDistance(pxDistX);
-    let bxDistY = calcBoxDistance(pxDistY);
-    return {x : pxDistX, y: pxDistY, xb: bxDistX, yb: bxDistY};
-}
-
-function calcBoxDistance(pixelDistance) {
-    return -Math.ceil(pixelDistance / (scale * cameraZoom));
-}
-
-function addHTMLInfoPanel() {
-    const maxOpacity = .8;
-    const remSpacing = .6;
-    let sq = findLiveSquare(ac.mousePosition.x, ac.mousePosition.y);
-    let element = document.getElementById('squareInfo');
-    let needsAppended = false;
-    if (element == null) { // no element has been created yet to show the info
-        element = document.createElement('div');
-        element.setAttribute('id', squareInfo);
-        needsAppended = true;
-    }
-    if (sq === undefined) { // no square is alive in this case
-        element.style.opacity = "0";
-        // if (needsAppended) document.getElementById('canvasContainer').appendChild(element);
-        return;
-    }
-    element.innerHTML = `
-        <ul>
-            <li>Type: ${sq.type}</li>
-            <li>Color: ${sq.color}</li>
-            <li>Health-Attack: ${sq.HA}/${sq.originalHA}</li>
-        </ul>`;
-    element.style.left = `calc(${ac.mousePosition.x}px + ${remSpacing}rem)`;
-    element.style.top = `calc(${ac.mousePosition.y}px - ${remSpacing}rem - ${element.getBoundingClientRect().height}px)`;
-    if (sq !== undefined) element.style.opacity = maxOpacity + "";
-    if (needsAppended) document.getElementById('canvasContainer').appendChild(element);
 }

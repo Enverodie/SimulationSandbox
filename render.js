@@ -8,6 +8,8 @@ const squares = [];
 const boxes = 35;
 const scale = 20;
 
+let previousCoord = {x: 0, y: 0}; // current mouse position, updated with move listeners (in controls.js)
+
 let cameraOffset = { x: 0, y: 0 }
 let cameraZoom = .5
 let MAX_ZOOM = 5
@@ -59,7 +61,7 @@ function drawAll() {
     drawSquares();
     drawGrid(.15);
 
-    // addHTMLInfoPanel(); // adds an HTML element describing the square currently hovered on
+    addHTMLInfoPanel(); // adds an HTML element describing the square currently hovered on
 
 
     ctx.translate(-cameraOffset.x, -cameraOffset.y);
@@ -102,14 +104,54 @@ function sizeCanvas() {
 
 window.addEventListener('resize', sizeCanvas);
 
-// creates a bunch of boxes adjacent to one another 
-function create() {
-    for (let i = 0; i < boxes; i++) {
-        for (let j = 0; j < boxes; j++) {
-            let color = warmColors[ Math.floor(Math.random() * warmColors.length) ];
-            squares.push(new Square(i, j, color));
-        }
-    }
+
+function calcBoxDistance(pixelDistance) {
+    return -Math.ceil(pixelDistance / (scale * cameraZoom));
 }
-// create();
+
+function originDistanceFromDrawOrigin() {
+    let sOrigX = canvas.width/2, sOrigY = canvas.height/2;
+    let pxDistX = ((cameraOffset.x*cameraZoom)-(sOrigX)*cameraZoom+sOrigX);
+    let pxDistY = ((cameraOffset.y*cameraZoom)-(sOrigY)*cameraZoom+sOrigY);
+    let bxDistX = calcBoxDistance(pxDistX);
+    let bxDistY = calcBoxDistance(pxDistY);
+    return {x : pxDistX, y: pxDistY, xb: bxDistX, yb: bxDistY};
+}
+
+// returns the square within any given viewport coordinate, or undefined if it isn't alive
+function findLiveSquare(x, y) {
+    let d = originDistanceFromDrawOrigin();
+    let dx = d.x - x, dy = d.y - y;
+    let bx = calcBoxDistance(dx);
+    let by = calcBoxDistance(dy);
+    return g.living.get(`${bx},${by}`);
+}
+function addHTMLInfoPanel() {
+    console.log("Fucking test" ,previousCoord);
+    const maxOpacity = .8;
+    const remSpacing = .6;
+    let sq = findLiveSquare(previousCoord.x, previousCoord.y); // why is this fucker undefined
+    let element = document.getElementById('squareInfo');
+    let needsAppended = false;
+    if (element == null) { // no element has been created yet to show the info
+        element = document.createElement('div');
+        element.setAttribute('id', 'squareInfo');
+        needsAppended = true;
+    }
+    if (sq === undefined) { // no square is alive in this case
+        element.style.opacity = "0";
+        // if (needsAppended) document.getElementById('canvasContainer').appendChild(element);
+        return;
+    }
+    element.innerHTML = `
+        <ul>
+            <li>Type: ${sq.type}</li>
+            <li>Color: ${sq.color}</li>
+            <li>Health-Attack: ${sq.HA}/${sq.originalHA}</li>
+        </ul>`;
+    element.style.left = `calc(${previousCoord.x}px + ${remSpacing}rem)`;
+    element.style.top = `calc(${previousCoord.y}px - ${remSpacing}rem - ${element.getBoundingClientRect().height}px)`;
+    if (sq !== undefined) element.style.opacity = maxOpacity + "";
+    if (needsAppended) document.getElementById('canvasContainer').appendChild(element);
+}
 
