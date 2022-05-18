@@ -127,10 +127,9 @@ function findLiveSquare(x, y) {
     return g.living.get(`${bx},${by}`);
 }
 function addHTMLInfoPanel() {
-    console.log("Fucking test" ,previousCoord);
     const maxOpacity = .8;
     const remSpacing = .6;
-    let sq = findLiveSquare(previousCoord.x, previousCoord.y); // why is this fucker undefined
+    let sq = findLiveSquare(previousCoord.x, previousCoord.y);
     let element = document.getElementById('squareInfo');
     let needsAppended = false;
     if (element == null) { // no element has been created yet to show the info
@@ -140,6 +139,7 @@ function addHTMLInfoPanel() {
     }
     if (sq === undefined) { // no square is alive in this case
         element.style.opacity = "0";
+        element.style.visibility = 'hidden';
         // if (needsAppended) document.getElementById('canvasContainer').appendChild(element);
         return;
     }
@@ -151,7 +151,10 @@ function addHTMLInfoPanel() {
         </ul>`;
     element.style.left = `calc(${previousCoord.x}px + ${remSpacing}rem)`;
     element.style.top = `calc(${previousCoord.y}px - ${remSpacing}rem - ${element.getBoundingClientRect().height}px)`;
-    if (sq !== undefined) element.style.opacity = maxOpacity + "";
+    if (sq !== undefined) {
+        element.style.visibility = 'visible';
+        element.style.opacity = maxOpacity + "";
+    } 
     if (needsAppended) document.getElementById('canvasContainer').appendChild(element);
 }
 

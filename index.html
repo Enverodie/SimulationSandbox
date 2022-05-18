@@ -46,8 +46,15 @@
                 padding-right: 1rem;
                 border-radius: .6rem;
                 color: var(--txtColor);
+                
+                -moz-user-select: -moz-none;
+                -khtml-user-select: none;
+                -webkit-user-select: none;
+                -o-user-select: none;
+                user-select: none;
 
-                transition: opacity var(--standardTransition) .1s;
+                --timeTaken: .1s;
+                transition: opacity var(--standardTransition) var(--timeTaken), visibility var(--standardTransition) var(--timeTaken);
             }
 
             canvas.canGrab {

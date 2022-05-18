@@ -147,10 +147,9 @@ function onPointerUp(e) {
 function onPointerMove(e) {
     e = getEventLocation(e);
     previousCoord = {x: e.x, y: e.y};
-    console.log("This is p: ", previousCoord);
     if (as.dragging) {
-        cameraOffset.x = getEventLocation(e).x/cameraZoom - dragStart.x; 
-        cameraOffset.y = getEventLocation(e).y/cameraZoom - dragStart.y;
+        cameraOffset.x = e.x/cameraZoom - dragStart.x; 
+        cameraOffset.y = e.y/cameraZoom - dragStart.y;
     }
     if (as.placeMode) {
         placeSquare(e);
