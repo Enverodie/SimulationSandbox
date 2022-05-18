@@ -1,6 +1,5 @@
 Objectives:
 
-* Add a GUI
 * Add support for multiple lifeforms
 * Add support for different lifeform tick speed
 * Add conflict
@@ -10,3 +9,4 @@ Objectives:
 
 Considerations:
 * Add a class "lifeforms" that stores information about each created lifeform (perhaps including all their maps)
+* Add a counter in a corner of the screen that shows what generation the simulation is on
