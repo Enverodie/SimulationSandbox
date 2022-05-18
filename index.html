@@ -10,21 +10,62 @@
         <script src="controls.js" defer></script>
         <!-- <script src="test.js" defer></script> -->
         <style>
+            :root {
+                --mainWidth: 0%;
+            }
+
             body {
                 margin: 0;
+                display: flex;
+                width: 100vw;
+
             }
 
             #canvasContainer {
+                width: calc(100% - var(--mainWidth));
                 height: 100vh;
                 margin: 0;
                 padding: 0;
                 border: 0;
+                position: relative;
+            }
+
+            main {
+                width: var(--mainWidth);
+                overflow-x: hidden;
+            }
+
+            main, #canvasContainer {
+                transition: width cubic-bezier(0.25, 0.46, 0.45, 0.94) .3s;
+            }
+
+            .hideControls {
+                position: absolute;
+                top: 0;
+                right: 0;
+                padding: .3rem;
+                margin: .5rem;
             }
         </style>
     </head>
     <body>
         <div id="canvasContainer">
             <canvas id="canvas"></canvas>
+            <script>
+                function toggleMainView() {
+                    const element = document.querySelector(":root");
+                    const property = '--mainWidth';
+                    const defaultExtension = '20%';
+                    let ps = getComputedStyle(element).getPropertyValue(property);
+                    ps === '0%' ? element.style.setProperty(property, defaultExtension) : element.style.setProperty(property, '0%');
+                }
+            </script>
+            <button class="hideControls" onclick="toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg"></button>
         </div>
+        <main>
+            <div class="controls">
+                <h1>Hello</h1>
+            </div>
+        </main>
     </body>
 </html>
