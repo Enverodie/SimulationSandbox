@@ -85,7 +85,8 @@
                 padding: 1rem;
                 display: flex;
                 flex-direction: column;
-                align-items: center;
+                align-items: initial;
+                white-space: nowrap;
             }
             
             main nav {
@@ -129,6 +130,58 @@
                 border-right: 1px solid cyan;
                 border-left: 1px solid cyan;
             }
+
+            .controls {
+                background-color: hsl(260deg, 84%, 30%);
+                padding: 1rem 4rem 1rem .8rem;
+                margin: 1rem 0;
+                overflow-x: hidden;
+            }
+
+            .controls * {
+                display: block;
+            }
+            
+            .listChoice {
+                overflow-x: auto; /* Gives a horizontal scrollbar but only when necessary */
+                white-space: nowrap;
+            }
+            
+            .listChoice * {
+                display: inline-block;
+            }
+            
+            .listChoice button {
+                border: none;
+                background-color: hsl(260deg, 84%, 40%);
+                cursor: pointer;
+                color: var(--txtColor);
+                padding: .8em;
+                margin: .3em;
+            }
+            
+            .listChoice button.active {
+                background-color: hsl(260deg, 84%, 20%);
+                cursor: not-allowed;
+
+            }
+
+            .listChoice button:not(.active):hover {
+                background-color: hsl(260deg, 84%, 50%);                
+            }
+            
+            .listChoice button:not(.active):active {
+                background-color: hsl(260deg, 95%, 30%);                
+            }
+            
+            .listChoice button:first-child {
+                margin-left: 0;
+            }
+            
+            .listChoice button:last-child {
+                margin-right: 0;
+            }
+
         </style>
     </head>
     <body>
@@ -148,6 +201,15 @@
                         <label>Place color:
                             <input id="currentPlaceColor" type="color" value="#fff000" onchange="{as.placeColor = this.value}">
                         </label>
+                    </div>
+                    <div class="controls">
+                        <label>Select lifeform:</label>
+                            <div id="lifeformChoice" class="listChoice">
+                                <button onclick="setActiveLifeform(this)" class="active">conway</button>
+                                <button onclick="setActiveLifeform(this)">conwei</button>
+                                <button onclick="setActiveLifeform(this)">conway</button>
+                            </div>
+                            <!-- <input id="currentPlaceColor" type="color" value="#fff000" onchange="{as.placeColor = this.value}"> -->
                     </div>
                 </div>
             </div>

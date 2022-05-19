@@ -54,3 +54,16 @@ document.addEventListener('mouseup', () => {
     hasCrossedRoundThreshold = false;
 });
 document.addEventListener('mousemove', e => resizeMain(e));
+
+function setActiveLifeform(button) {
+
+    // setup, ensure exclusive use of 'active'
+    let list = [ ...document.getElementById('lifeformChoice').children ];
+    list = list.filter(option => option.classList.contains('active'));
+    item = list[0];
+    button.classList.add('active');
+    item.classList.remove('active');
+
+    // set the placement
+    as.placeType = button.innerText;
+}

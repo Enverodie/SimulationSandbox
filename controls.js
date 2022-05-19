@@ -23,6 +23,7 @@ const as = {
     placeMode   : false,
     deleteMode  : false,
     placeColor  : document.getElementById('currentPlaceColor').value,
+    placeType   : 'conway',
 }
 
 // handle keyboard inputs
@@ -224,7 +225,7 @@ function placeSquare(e) {
     let dx = d.x - x, dy = d.y - y;
     let bx = calcBoxDistance(dx);
     let by = calcBoxDistance(dy);
-    createSquareOfType('conway', bx, by, as.placeColor);
+    createSquareOfType(as.placeType, bx, by, as.placeColor);
 }
 
 function deleteSquare(e) {
