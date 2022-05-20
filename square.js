@@ -72,7 +72,9 @@ function Square(x, y, color, type, sphereOfInfluence, surviveCondition, extraSur
         if (this.canSurvive()) g.nextGen.set(`${this.x},${this.y}`, this);
         else this.kill(false);
     }
-    this.testReproduction = function () {
+    this.testReproduction = function () { 
+        // checks every cell in the sphere of influence -
+        // executes the lifeform's reproduceRule on that string
         for (cstring of this.sphereOfInfluence(this.x, this.y)) {
             if (this.reproduceRule(this.sphereOfInfluence, cstring)) {
                 let c = dissectCoord(cstring);
