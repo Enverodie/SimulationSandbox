@@ -49,6 +49,6 @@ function createR30() {
         }
     }
 
-    addNewLifeform(name, sphereOfInfluence, surviveCondition, [], reproduceRule, .1);
+    addNewLifeform(name, sphereOfInfluence, surviveCondition, reproduceRule, .1);
 }
 createR30();
