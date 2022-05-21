@@ -49,10 +49,10 @@ function handleKeydownUp(press) {
         switch(press.key) {
             case ' ':
                 ac.spaceDown = true;
-                canvas.classList.add(canGrab);
+                canvasContainer.classList.add(canGrab);
                 break;
             case 'Control':
-                canvas.classList.add(canPlace);
+                canvasContainer.classList.add(canPlace);
                 break;
             default:
                 break;
@@ -63,10 +63,10 @@ function handleKeydownUp(press) {
         switch(press.key) {
             case ' ':
                 ac.spaceDown = false;
-                canvas.classList.remove(canGrab);
+                canvasContainer.classList.remove(canGrab);
                 break;
             case 'Control':
-                canvas.classList.remove(canPlace);
+                canvasContainer.classList.remove(canPlace);
                 break;
             default:
                 break;
@@ -108,7 +108,7 @@ function onPointerDown(e) {
         // drag mode
         if (ac.spaceDown) {
             as.dragging = true;
-            canvas.classList.add(isGrabbing);
+            canvasContainer.classList.add(isGrabbing);
             dragStart.x = getEventLocation(e).x/cameraZoom - cameraOffset.x;
             dragStart.y = getEventLocation(e).y/cameraZoom - cameraOffset.y;
         }
@@ -135,7 +135,7 @@ function onPointerUp(e) {
         ac.holdLclick = false;
         if (as.dragging) {
             as.dragging = false;
-            canvas.classList.remove(isGrabbing);
+            canvasContainer.classList.remove(isGrabbing);
             initialPinchDistance = null;
             lastZoom = cameraZoom;
         }
@@ -151,6 +151,7 @@ function onPointerMove(e) {
     if (as.dragging) {
         cameraOffset.x = e.x/cameraZoom - dragStart.x; 
         cameraOffset.y = e.y/cameraZoom - dragStart.y;
+        gridIsUpToDate = false;
     }
     if (as.placeMode) {
         placeSquare(e);
@@ -205,17 +206,17 @@ function adjustZoom(zoomAmount, zoomFactor) {
         
         cameraZoom = Math.min( cameraZoom, MAX_ZOOM )
         cameraZoom = Math.max( cameraZoom, MIN_ZOOM )
-        
+        gridIsUpToDate = false;
     }
 }
 
-canvas.addEventListener('mousedown', onPointerDown)
-canvas.addEventListener('touchstart', (e) => handleTouch(e, onPointerDown))
-canvas.addEventListener('mouseup', onPointerUp)
-canvas.addEventListener('touchend',  (e) => handleTouch(e, onPointerUp))
-canvas.addEventListener('mousemove', onPointerMove)
-canvas.addEventListener('touchmove', (e) => handleTouch(e, onPointerMove))
-canvas.addEventListener('wheel', (e) => adjustZoom(e.deltaY*SCROLL_SENSITIVITY))
+canvasContainer.addEventListener('mousedown', onPointerDown)
+canvasContainer.addEventListener('touchstart', (e) => handleTouch(e, onPointerDown))
+canvasContainer.addEventListener('mouseup', onPointerUp)
+canvasContainer.addEventListener('touchend',  (e) => handleTouch(e, onPointerUp))
+canvasContainer.addEventListener('mousemove', onPointerMove)
+canvasContainer.addEventListener('touchmove', (e) => handleTouch(e, onPointerMove))
+canvasContainer.addEventListener('wheel', (e) => adjustZoom(e.deltaY*SCROLL_SENSITIVITY))
 
 // mouse event listener helper functions
 

@@ -40,6 +40,10 @@
                 z-index: 5;
             }
 
+            #canvasContainer > canvas {
+                position: absolute;
+            }
+
             #squareInfo {
                 position: absolute;
                 background-color: var(--bgColor);
@@ -58,16 +62,16 @@
                 transition: opacity var(--standardTransition) var(--timeTaken), visibility var(--standardTransition) var(--timeTaken);
             }
 
-            canvas.canGrab {
+            .canPlace {
+                cursor: copy;
+            }
+
+            .canGrab {
                 cursor: grab;
             }
 
-            canvas.isGrabbing {
+            .isGrabbing {
                 cursor: grabbing;
-            }
-
-            canvas.canPlace {
-                cursor: copy;
             }
 
             main {
@@ -187,9 +191,10 @@
     </head>
     <body>
         <div id="canvasContainer">
-            <canvas id="canvas"></canvas>
-            <div id="dragMainBox"></div>
-            <button class="hideMain" onclick="toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg"></button>
+            <button class="hideMain" style="z-index: 5" onclick="toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg"></button>
+            <div id="dragMainBox" style="z-index: 4"></div>
+            <canvas id="canvasGrid" style="z-index: 3"></canvas>
+            <canvas id="canvas" style="z-index: 2;"></canvas>
         </div>
         <main>
             <div class="border">

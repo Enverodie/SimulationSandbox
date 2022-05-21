@@ -1,15 +1,18 @@
 const canvasContainer = document.getElementById('canvasContainer');
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const coolColors = ['darkblue', 'blue', 'lightblue', 'darkcyan', 'cyan', 'lightcyan'];
-const warmColors = ['darkred', 'red', 'lightred', 'darkorange', 'orange', 'lightorange'];
 
-const squares = [];
-const boxes = 35;
+const canvas = document.getElementById('canvas');
+const canvasGrid = document.getElementById('canvasGrid');
+const canvasOffscreen1 = document.createElement('canvas');
+
+const ctx = canvas.getContext('2d', {alpha: false});
+const gridctx = canvasGrid.getContext('2d');
 const scale = 20;
+const gridThickness = .035;
 
 let previousCoord = {x: 0, y: 0}; // current mouse position, updated with move listeners (in controls.js)
 
+let gridIsUpToDate = false;
+let cssInTransition = false;
 let cameraOffset = { x: 0, y: 0 }
 let cameraZoom = .5
 let MAX_ZOOM = 5
@@ -17,20 +20,22 @@ let MIN_ZOOM = 0.05
 let SCROLL_SENSITIVITY = 0.001
 
 // TODO: make this infinite
-function drawGrid(opacity = .2) {
-    const thickness = .035;
-    ctx.save();
+function drawGrid(context, opacity = .2) {
+    console.log('rendered grid');
+    let cDim = canvasContainer.getBoundingClientRect();
+    context.save();
 
-    ctx.fillStyle = `rgba(125, 125, 125, ${opacity})`;
-    ctx.scale(scale, scale);
-    for (let i = -canvas.width; i <= canvas.width; i++) { // draw vertical lines
-        ctx.fillRect(i-(thickness/2), -canvas.height, thickness, 2*canvas.height);
+    context.fillStyle = `rgba(125, 125, 125, ${opacity})`;
+    context.scale(scale, scale);
+    for (let i = -cDim.width; i <= cDim.width; i++) { // draw vertical lines
+        context.fillRect(i-(gridThickness/2), -cDim.height, gridThickness, 2*cDim.height);
     }
-    for (let i = -canvas.height; i <= canvas.height; i++) { // draw horizontal lines
-        ctx.fillRect(-canvas.width, i-(thickness/2), 2*canvas.width, thickness);
+    for (let i = -cDim.height; i <= cDim.height; i++) { // draw horizontal lines
+        context.fillRect(-cDim.width, i-(gridThickness/2), 2*cDim.width, gridThickness);
     }
 
-    ctx.restore();
+    context.restore();
+    gridIsUpToDate = true;
 }
 
 function drawSquares() {
@@ -48,63 +53,81 @@ function drawSquares() {
 }
 
 function drawAll() {
-    sizeCanvas();
-    setBackgroundColor("black");
+    // setBackgroundColor(ctx, "black");
+    sizeCanvas(canvas);
+    setScrollEffect(ctx, true);
     
-    // Makes the zoom work
-    setScrollEffect(true);
-    
-
     ctx.translate(cameraOffset.x, cameraOffset.y); // translates to the current camera offset
     
     ctx.save();
+    
+    console.log("rendered");
+    if (cssInTransition || !gridIsUpToDate) {
+        sizeCanvas(canvasGrid); // makes sure the grid canvas is the same size as the other one
 
+        gridctx.save();
+        setScrollEffect(gridctx, true);
 
+        gridctx.translate(cameraOffset.x, cameraOffset.y); // moves to the camera offset
+        drawGrid(gridctx, .15);
+        gridctx.translate(-cameraOffset.x, -cameraOffset.y); // reverses the camera offset move
+
+        gridctx.restore();
+    } 
     drawSquares();
-    drawGrid(.15);
+    
 
     addHTMLInfoPanel(); // adds an HTML element describing the square currently hovered on
 
 
     ctx.translate(-cameraOffset.x, -cameraOffset.y);
     // everything drawn here will be immune to moving (but not scrolling)
-    setScrollEffect(false);
+    setScrollEffect(ctx, false);
     // everything drawn here will be static on the screen
 
     // ctx.fillRect(0, 0, 100, 100);
 
     requestAnimationFrame(drawAll);
 }
+
 drawAll();
 
-function setBackgroundColor(color) {
+
+function setBackgroundColor(context, color) {
     if (!color) return;
-    ctx.save();
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.restore();
+    context.save();
+    context.fillStyle = color;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.restore();
 }
 
-function setScrollEffect(value) {
+function setScrollEffect(context, value) {
+    let cDim = canvasContainer.getBoundingClientRect();
     if (value) {
-        ctx.translate(canvas.width/2, canvas.height/2);
-        ctx.scale(cameraZoom, cameraZoom);
-        ctx.translate(-canvas.width/2, -canvas.height/2);
+        context.translate(cDim.width/2, cDim.height/2);
+        context.scale(cameraZoom, cameraZoom);
+        context.translate(-cDim.width/2, -cDim.height/2);
     }
     else {
-        ctx.translate(canvas.width/2, canvas.height/2);
-        ctx.scale(1/cameraZoom, 1/cameraZoom);
-        ctx.translate(-canvas.width/2, -canvas.height/2);
+        context.translate(cDim.width/2, cDim.height/2);
+        context.scale(1/cameraZoom, 1/cameraZoom);
+        context.translate(-cDim.width/2, -cDim.height/2);
     }
 }
 
-function sizeCanvas() {
+function sizeCanvas(c) {
     let cDim = canvasContainer.getBoundingClientRect();
-    canvas.width = cDim.width;
-    canvas.height = cDim.height;
+    c.width = cDim.width;
+    c.height = cDim.height;
 }
 
-window.addEventListener('resize', sizeCanvas);
+function sizeCanvasses() {
+    sizeCanvas(canvas);
+    sizeCanvas(canvasGrid);
+    gridIsUpToDate = false;
+}
+
+window.addEventListener('resize', sizeCanvasses);
 
 
 function calcBoxDistance(pixelDistance) {

@@ -8,8 +8,19 @@ function percentToNumber(percent) {
 function toggleMainView(percent = '20%') {
     const percentThreshold = 3;
     let ps = getComputedStyle(root).getPropertyValue(mainCSSProperty);
-    console.log(ps, percentToNumber(ps));
-    percentToNumber(ps) <= percentThreshold ? root.style.setProperty(mainCSSProperty, percent) : root.style.setProperty(mainCSSProperty, '0%');
+    percentToNumber(ps) <= percentThreshold ? setMainView(percent) : setMainView('0%');
+
+    cssInTransition = true;
+    let str = window.getComputedStyle(canvasContainer).transition;
+    let w = str.indexOf("width");
+    let we = str.slice(w).indexOf('s');
+    w = str.slice(w).indexOf(' ') + 1;
+    str = str.slice(w, we);
+    let cssTransitionSpeed; 
+    str[str.length - 1] === 'm' ? 
+        cssTransitionSpeed = Number.parseFloat(str) : 
+        cssTransitionSpeed = Number.parseFloat(str) * 1000; // if the css property is written in milliseconds
+    setTimeout(()=>cssInTransition=false, cssTransitionSpeed);
 }
 
 const roundThreshold = 10;
@@ -17,17 +28,18 @@ let hasCrossedRoundThreshold = false; // will be used to prevent snapping on ini
 
 function setMainView(percent) {
     let numericPercent = percentToNumber(percent);
-    console.log(numericPercent, numericPercent <= roundThreshold, hasCrossedRoundThreshold);
     if (numericPercent <= roundThreshold && hasCrossedRoundThreshold) {
         root.style.setProperty(mainCSSProperty, '0%');
     } 
     else root.style.setProperty(mainCSSProperty, percent);
+    console.log(window.getComputedStyle(canvasContainer));
+    
+    gridIsUpToDate = false;
 }
 
 let isDraggingMain = false;
 function resizeMain(move) {
     if (!isDraggingMain) return;
-
     let x = move.clientX, wX = window.innerWidth;
 
     let percent = x / wX;
