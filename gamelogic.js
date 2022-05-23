@@ -28,7 +28,7 @@ function addNewLifeform(type, sphereOfInfluence, surviveCondition, reproduceRule
     let lf = new Square(null, null, null, type, sphereOfInfluence, surviveCondition, reproduceRule, starterHealthAttack);
     g.createdLifeforms.push(lf);
     let newButton = document.createElement('button');
-    newButton.setAttribute("onclick", "mainMenuDragging.setActiveLifeform(this)");
+    newButton.setAttribute("onclick", "setActiveLifeform(this)");
     newButton.innerText = type;
     document.getElementById("lifeformChoice").append(newButton);
 }
