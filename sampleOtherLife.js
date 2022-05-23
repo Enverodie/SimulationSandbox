@@ -1,4 +1,5 @@
-function createR30() {
+// Create rule 30
+(function() {
     let name = 'rule 30';
     function sphereOfInfluence(x, y) {
         return [ 
@@ -44,9 +45,10 @@ function createR30() {
         }
     }
     addNewLifeform(name, sphereOfInfluence, surviveCondition, reproduceRule, .1);
-}
+})();
 
-function createR110() {
+// Create rule 110
+(function() {
     let name = 'rule 110';
     function sphereOfInfluence(x, y) {
         return [ 
@@ -90,7 +92,4 @@ function createR110() {
         }
     }
     addNewLifeform(name, sphereOfInfluence, surviveCondition, reproduceRule, .1);
-}
-
-createR30();
-createR110();
+})();

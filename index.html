@@ -193,7 +193,7 @@
     </head>
     <body>
         <div id="canvasContainer">
-            <button class="hideMain" style="z-index: 6" onclick="toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg"></button>
+            <button class="hideMain" style="z-index: 6" onclick="mainMenuDragging.toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg"></button>
             <div id="dragMainBox" style="z-index: 5"></div>
             <canvas id="canvasGrid" style="z-index: 4"></canvas>
             <canvas id="canvasDead" style="z-index: 3"></canvas>
@@ -214,7 +214,7 @@
                     <div class="controls">
                         <label>Select lifeform:</label>
                         <div id="lifeformChoice" class="listChoice">
-                            <button onclick="setActiveLifeform(this)" class="active">conway</button>
+                            <button onclick="mainMenuDragging.setActiveLifeform(this)" class="active">conway</button>
                         </div>
                     </div>
                 </div>
