@@ -120,26 +120,30 @@ const RMethods = new (function() {
     }
         
     this.advanceFrame = () => {
-        // RMethods.setBackgroundColor(ctx, "black");
         this.sizeCanvas(ctx.canvas);
         this.setScrollEffect(ctx, true);
         
-        ctx.translate(MUStates.cameraOffset.x, MUStates.cameraOffset.y); // translates to the current camera offset
+        let updateEverything = false;
+        if (MUStates.cssInTransition || !MUStates.gridIsUpToDate) updateEverything = true;
         
+        ctx.translate(MUStates.cameraOffset.x, MUStates.cameraOffset.y); // translates to the current camera offset
         ctx.save();
         
-        if (MUStates.cssInTransition || !MUStates.gridIsUpToDate) {
-            this.sizeCanvas(gridctx.canvas); // makes sure the grid canvas is the same size as the other one
+        if (updateEverything) {
+            this.sizeCanvas(deadctx.canvas); // makes sure the grid canvas is the same size as the other one
+            this.sizeCanvas(gridctx.canvas);
             
             gridctx.save();
-            this.setScrollEffect(gridctx, true);
-            
+            this.setScrollEffect(gridctx, true); // allows the grid to scroll
             gridctx.translate(MUStates.cameraOffset.x, MUStates.cameraOffset.y); // moves to the camera offset
             this.drawGrid(gridctx, .15);
-            gridctx.translate(-MUStates.cameraOffset.x, -MUStates.cameraOffset.y); // reverses the camera offset move
-            
             gridctx.restore();
-        } 
+            
+        }
+        else {
+
+        }
+        this.drawDead();
         this.drawSquares();
         
         

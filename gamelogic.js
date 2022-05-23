@@ -1,4 +1,7 @@
 function calcNextGen() {
+    for (square of g.dead.values()) {
+        square.calcFade();
+    }
     for (square of g.living.values()) {
         square.testAll();
     }

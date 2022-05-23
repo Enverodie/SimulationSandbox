@@ -112,11 +112,11 @@ const deathPenalty = .5;
 function DeadSquare(x, y, color) {
     this.x = x;
     this.y = y;
-    this.color = color; // the same as the color of the living cell
+    this.maincolor = color; // the same as the color of the living cell
     this.deathStage = g.stage; // when this object is created, keep track of the stage it died in to keep track of how long ago it died
-    this.draw = function(context = ctx) {
-        
-        let cObj = colorToObj(this.color);
+    this.rendercolor;
+    this.calcFade = function() {
+        let cObj = colorToObj(this.maincolor);
         let deathTime = g.stage - this.deathStage; // how many ticks have passed since this has died
         if (deathTime < 1) deathTime = 1;
 
@@ -130,9 +130,15 @@ function DeadSquare(x, y, color) {
             a: Math.max( opacityDelta, minOpacity, 0),
         }; // darkened colors
 
-        context.fillStyle = `rgba(${dC.r},${dC.g},${dC.b},${dC.a})`;
+        this.rendercolor = `rgba(${dC.r},${dC.g},${dC.b},${dC.a})`;
+    }
+    this.calcFade();
+
+    this.draw = function(context = ctx) {
+        context.fillStyle = this.rendercolor;
         context.fillRect(this.x, this.y, 1, 1);
     }
+
 }
 
 // pass a coordinate string, get an object with the numbers
