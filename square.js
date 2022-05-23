@@ -53,9 +53,9 @@ function Square(x, y, color, type, sphereOfInfluence, surviveCondition, reproduc
     
     this.HA = this.originalHA; // this variable IS modified whenever a cell takes a "hit".
 
-    this.draw = function() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, 1, 1);
+    this.draw = function(context = ctx) {
+        context.fillStyle = this.color;
+        context.fillRect(this.x, this.y, 1, 1);
     };
     this.canSurvive = function() {
         if (!this.surviveCondition(this.sphereOfInfluence)) return false;
@@ -114,7 +114,7 @@ function DeadSquare(x, y, color) {
     this.y = y;
     this.color = color; // the same as the color of the living cell
     this.deathStage = g.stage; // when this object is created, keep track of the stage it died in to keep track of how long ago it died
-    this.draw = function() {
+    this.draw = function(context = ctx) {
         
         let cObj = colorToObj(this.color);
         let deathTime = g.stage - this.deathStage; // how many ticks have passed since this has died
@@ -130,8 +130,8 @@ function DeadSquare(x, y, color) {
             a: Math.max( opacityDelta, minOpacity, 0),
         }; // darkened colors
 
-        ctx.fillStyle = `rgba(${dC.r},${dC.g},${dC.b},${dC.a})`;
-        ctx.fillRect(this.x, this.y, 1, 1);
+        context.fillStyle = `rgba(${dC.r},${dC.g},${dC.b},${dC.a})`;
+        context.fillRect(this.x, this.y, 1, 1);
     }
 }
 

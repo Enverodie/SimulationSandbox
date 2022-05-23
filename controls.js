@@ -1,29 +1,41 @@
-// cursor control class names
-const canGrab = "canGrab";
-const isGrabbing = "isGrabbing";
-const canPlace = "canPlace";
+// Simulation controls
+/*  Useful in that some other event may be triggered with a combination of button presses
+*/
+const simControls = new (function() {
+    let dragStart = { x: 0, y: 0 };
+    this.getDrag = function() {return dragStart}
+    this.setDrag = function(x, y) {dragStart.x = x, dragStart.y = y}
 
-// active controls
-/*  Active controls describes which button is currently being held,
-    particularly in the case that some other event may be triggered with a combination of button presses
-    */
-const ac = { 
-    spaceDown : false,
-    holdLclick : false,
-}
+    this.playPause = function() {
+        as.playing = !as.playing;
+        if (as.playing) {
+            runLoop(); // needs to be restarted
+        }
+    }
 
-// active state
-/*  Active controls describes which "states" are currently active,
-    particularly when multiple buttons are being held at once and/or separate
-    event listeners need to keep track of the same thing happening. 
-    */
-const as = {
-    dragging    : false,
-    playing     : false,
-    placeMode   : false,
-    deleteMode  : false,
-    placeColor  : document.getElementById('currentPlaceColor').value,
-    placeType   : 'conway',
+    this.spaceDown = false;
+    this.holdLclick = false;
+    this.initialPinchDistance = null;
+    this.lastZoom = MUStates.cameraZoom;
+});
+
+// square placement/targetting functions
+const spf = {
+
+    placeSquare: function(e) {
+        let x = e.x, y = e.y;
+        let d = grf.originDistanceFromDrawOrigin();
+        let dx = d.x - x, dy = d.y - y;
+        let bx = grf.calcBoxDistance(dx);
+        let by = grf.calcBoxDistance(dy);
+        createSquareOfType(as.placeType, bx, by, as.placeColor);
+    },
+    
+    deleteSquare: function(e) {
+        let x = e.x, y = e.y;
+        let sq = grf.findLiveSquare(x, y);
+        if (sq !== undefined) sq.kill();
+    },
 }
 
 // handle keyboard inputs
@@ -35,7 +47,7 @@ function handleKeypress(press) {
             reset();
             break;
         case 's': // start/stop
-            playPause();
+            simControls.playPause();
             break;
         default:
             break;
@@ -48,11 +60,11 @@ function handleKeydownUp(press) {
 
         switch(press.key) {
             case ' ':
-                ac.spaceDown = true;
-                canvasContainer.classList.add(canGrab);
+                simControls.spaceDown = true;
+                canvasContainer.classList.add("canGrab");
                 break;
             case 'Control':
-                canvasContainer.classList.add(canPlace);
+                canvasContainer.classList.add("canPlace");
                 break;
             default:
                 break;
@@ -62,11 +74,11 @@ function handleKeydownUp(press) {
 
         switch(press.key) {
             case ' ':
-                ac.spaceDown = false;
-                canvasContainer.classList.remove(canGrab);
+                simControls.spaceDown = false;
+                canvasContainer.classList.remove("canGrab");
                 break;
             case 'Control':
-                canvasContainer.classList.remove(canPlace);
+                canvasContainer.classList.remove("canPlace");
                 break;
             default:
                 break;
@@ -74,20 +86,9 @@ function handleKeydownUp(press) {
     }
 }
 
-// keyboard input helper functions
-
-function playPause() {
-    as.playing = !as.playing;
-    if (as.playing) {
-        runLoop(); // needs to be restarted
-    }
-}
-
 document.addEventListener('keypress', handleKeypress);
 document.addEventListener('keydown', handleKeydownUp);
 document.addEventListener('keyup', handleKeydownUp);
-
-let dragStart = { x: 0, y: 0 }
 
 // mouse event handlers & helpers
 
@@ -104,23 +105,25 @@ function getEventLocation(e) {
 // this function sets game states. When the pointer is pressed down.
 function onPointerDown(e) {
     if (e.buttons === 1) { // if left click
-        ac.holdLclick = true;
+        simControls.holdLclick = true;
         // drag mode
-        if (ac.spaceDown) {
+        if (simControls.spaceDown) {
             as.dragging = true;
-            canvasContainer.classList.add(isGrabbing);
-            dragStart.x = getEventLocation(e).x/cameraZoom - cameraOffset.x;
-            dragStart.y = getEventLocation(e).y/cameraZoom - cameraOffset.y;
+            canvasContainer.classList.add("isGrabbing");
+            simControls.setDrag(
+                getEventLocation(e).x/MUStates.cameraZoom - MUStates.cameraOffset.x,
+                getEventLocation(e).y/MUStates.cameraZoom - MUStates.cameraOffset.y
+            );
         }
         // place mode
-        if (!ac.spaceDown && e.ctrlKey) { // if not holding space and control clicking
+        if (!simControls.spaceDown && e.ctrlKey) { // if not holding space and control clicking
             as.placeMode = true;
-            placeSquare(e);
+            spf.placeSquare(e);
         }
         // delete mode
-        if (!ac.spaceDown && e.shiftKey) { // if not holding space and control clicking
+        if (!simControls.spaceDown && e.shiftKey) { // if not holding space and control clicking
             as.deleteMode = true;
-            deleteSquare(e);
+            spf.deleteSquare(e);
         }
     }
     if (e.buttons === 2) { // right click
@@ -132,12 +135,12 @@ function onPointerDown(e) {
 function onPointerUp(e) { 
     // console.log(e.buttons, e.isPrimary);
     if (e.buttons === 0) { // if left click
-        ac.holdLclick = false;
+        simControls.holdLclick = false;
         if (as.dragging) {
             as.dragging = false;
-            canvasContainer.classList.remove(isGrabbing);
-            initialPinchDistance = null;
-            lastZoom = cameraZoom;
+            canvasContainer.classList.remove("isGrabbing");
+            simControls.initialPinchDistance = null;
+            simControls.lastZoom = MUStates.cameraZoom;
         }
         if (as.placeMode) as.placeMode = !as.placeMode;
         if (as.deleteMode) as.deleteMode = !as.deleteMode;
@@ -147,17 +150,18 @@ function onPointerUp(e) {
 // This function checks gamestates. Whenever the mouse is moved, period.
 function onPointerMove(e) {
     e = getEventLocation(e);
-    previousCoord = {x: e.x, y: e.y};
+    MUStates.previousCoord = {x: e.x, y: e.y};
     if (as.dragging) {
-        cameraOffset.x = e.x/cameraZoom - dragStart.x; 
-        cameraOffset.y = e.y/cameraZoom - dragStart.y;
-        gridIsUpToDate = false;
+        let d = simControls.getDrag();
+        MUStates.cameraOffset.x = e.x/MUStates.cameraZoom - d.x; 
+        MUStates.cameraOffset.y = e.y/MUStates.cameraZoom - d.y;
+        MUStates.gridIsUpToDate = false;
     }
     if (as.placeMode) {
-        placeSquare(e);
+        spf.placeSquare(e);
     }
     if (as.deleteMode) {
-        deleteSquare(e);
+        spf.deleteSquare(e);
     }
 }
 
@@ -173,9 +177,6 @@ function handleTouch(e, singleTouchHandler) {
     }
 }
 
-let initialPinchDistance = null
-let lastZoom = cameraZoom
-
 function handlePinch(e) {
     e.preventDefault()
     
@@ -185,11 +186,11 @@ function handlePinch(e) {
     // This is distance squared, but no need for an expensive sqrt as it's only used in ratio
     let currentDistance = (touch1.x - touch2.x)**2 + (touch1.y - touch2.y)**2
     
-    if (initialPinchDistance == null) {
-        initialPinchDistance = currentDistance
+    if (simControls.initialPinchDistance == null) {
+        simControls.initialPinchDistance = currentDistance
     }
     else {
-        adjustZoom( null, currentDistance/initialPinchDistance )
+        adjustZoom( null, currentDistance/simControls.initialPinchDistance )
     }
 }
 
@@ -197,16 +198,16 @@ function handlePinch(e) {
 function adjustZoom(zoomAmount, zoomFactor) {
     if (!as.dragging) {
         if (zoomAmount) {
-            cameraZoom -= zoomAmount
+            MUStates.cameraZoom -= zoomAmount
         }
         else if (zoomFactor) {
             console.log(zoomFactor)
-            cameraZoom = zoomFactor*lastZoom
+            MUStates.cameraZoom = zoomFactor*lastZoom
         }
         
-        cameraZoom = Math.min( cameraZoom, MAX_ZOOM )
-        cameraZoom = Math.max( cameraZoom, MIN_ZOOM )
-        gridIsUpToDate = false;
+        MUStates.cameraZoom = Math.min( MUStates.cameraZoom, MAX_ZOOM )
+        MUStates.cameraZoom = Math.max( MUStates.cameraZoom, MIN_ZOOM )
+        MUStates.gridIsUpToDate = false;
     }
 }
 
@@ -217,20 +218,3 @@ canvasContainer.addEventListener('touchend',  (e) => handleTouch(e, onPointerUp)
 canvasContainer.addEventListener('mousemove', onPointerMove)
 canvasContainer.addEventListener('touchmove', (e) => handleTouch(e, onPointerMove))
 canvasContainer.addEventListener('wheel', (e) => adjustZoom(e.deltaY*SCROLL_SENSITIVITY))
-
-// mouse event listener helper functions
-
-function placeSquare(e) {
-    let x = e.x, y = e.y;
-    let d = originDistanceFromDrawOrigin();
-    let dx = d.x - x, dy = d.y - y;
-    let bx = calcBoxDistance(dx);
-    let by = calcBoxDistance(dy);
-    createSquareOfType(as.placeType, bx, by, as.placeColor);
-}
-
-function deleteSquare(e) {
-    let x = e.x, y = e.y;
-    let sq = findLiveSquare(x, y);
-    if (sq !== undefined) sq.kill();
-}

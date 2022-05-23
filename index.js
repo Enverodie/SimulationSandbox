@@ -10,7 +10,7 @@ function toggleMainView(percent = '20%') {
     let ps = getComputedStyle(root).getPropertyValue(mainCSSProperty);
     percentToNumber(ps) <= percentThreshold ? setMainView(percent) : setMainView('0%');
 
-    cssInTransition = true;
+    MUStates.cssInTransition = true;
     let str = window.getComputedStyle(canvasContainer).transition;
     let w = str.indexOf("width");
     let we = str.slice(w).indexOf('s');
@@ -20,7 +20,7 @@ function toggleMainView(percent = '20%') {
     str[str.length - 1] === 'm' ? 
         cssTransitionSpeed = Number.parseFloat(str) : 
         cssTransitionSpeed = Number.parseFloat(str) * 1000; // if the css property is written in milliseconds
-    setTimeout(()=>cssInTransition=false, cssTransitionSpeed);
+    setTimeout(()=>MUStates.cssInTransition=false, cssTransitionSpeed);
 }
 
 const roundThreshold = 10;
@@ -34,7 +34,7 @@ function setMainView(percent) {
     else root.style.setProperty(mainCSSProperty, percent);
     console.log(window.getComputedStyle(canvasContainer));
     
-    gridIsUpToDate = false;
+    MUStates.gridIsUpToDate = false;
 }
 
 let isDraggingMain = false;
