@@ -29,6 +29,9 @@ function reset() {
     MUStates.gridIsUpToDate = false;
 }
 
+
+// handling lifeforms
+
 function addNewLifeform(type, sphereOfInfluence, surviveCondition, reproduceRule, starterHealthAttack) {
     // right here would be a good place to check if the lifeform already exists
     let lf = new Square(null, null, null, type, sphereOfInfluence, surviveCondition, reproduceRule, starterHealthAttack);
@@ -39,21 +42,11 @@ function addNewLifeform(type, sphereOfInfluence, surviveCondition, reproduceRule
     document.getElementById("lifeformChoice").append(newButton);
 }
 
-function extractUseful(square) {
-    return {
-        type: square.type, 
-        sphereOfInfluence: square.sphereOfInfluence, 
-        surviveCondition: square.surviveCondition, 
-        reproduceRule: square.reproduceRule,
-        starterHealthAttack: square.starterHealthAttack,
-    };
-}
-
 function selectLifeform(type) {
     let arr = g.createdLifeforms.filter(function(e) {return e.type === type})
     let lf = arr[0];
     if (arr.length > 0) {
-        return extractUseful(lf);
+        return grf.extractUseful(lf);
     }
     else {
         console.warn("Lifeform of type " + type + " not found!");

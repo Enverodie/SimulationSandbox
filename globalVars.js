@@ -52,6 +52,16 @@ const grf = {
         let by = this.calcBoxDistance(dy);
         return g.living.get(`${bx},${by}`);
     },
+
+    extractUseful: function(square) {
+        return {
+            type: square.type, 
+            sphereOfInfluence: square.sphereOfInfluence, 
+            surviveCondition: square.surviveCondition, 
+            reproduceRule: square.reproduceRule,
+            starterHealthAttack: square.starterHealthAttack,
+        };
+    }
 }
 
 

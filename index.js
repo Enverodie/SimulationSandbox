@@ -31,7 +31,6 @@ const mainMenuDragging = {
             root.style.setProperty(mainMenuDragging.mainCSSProperty, '0%');
         } 
         else root.style.setProperty(mainMenuDragging.mainCSSProperty, percent);
-        console.log(window.getComputedStyle(canvasContainer));
         
         MUStates.gridIsUpToDate = false;
     },
