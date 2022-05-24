@@ -1,12 +1,11 @@
 Objectives:
 
-* Optimize rendering dead cells
-* Refactor code to adhere to best practices - https://www.w3schools.com/js/js_best_practices.asp
 * Add support for different lifeform tick speed
 * Add conflict
 * Add a timer that keeps track of WHEN to calculate the next stage for any given lifeform
 * Only render objects inside the viewport
 * Cells that were created in one stage and deleted in the same stage should not leave a body
+* Further improve dead cell rendering efficiency for large inputs when moving/resizing canvas
 
 Considerations:
 * Add a class "lifeforms" that stores information about each created lifeform (perhaps including all their maps)
