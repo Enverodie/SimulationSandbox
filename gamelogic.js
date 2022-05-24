@@ -24,6 +24,9 @@ function reset() {
     g.living.clear();
     g.nextGen.clear();
     g.dead?.clear(); // optional chaining operator because we want to be able to disable dead rendering and are not sure if it will exist at this point
+    MUStates.permaDeathQueue.length = 0;
+    g.permadead?.clear();
+    MUStates.gridIsUpToDate = false;
 }
 
 function addNewLifeform(type, sphereOfInfluence, surviveCondition, reproduceRule, starterHealthAttack) {

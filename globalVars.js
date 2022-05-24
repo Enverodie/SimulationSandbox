@@ -11,6 +11,7 @@ const MUStates = {
     cameraZoom : .5,
     gridIsUpToDate : false,
     cssInTransition : false,
+    permaDeathQueue : [],
 }
     
 // active state

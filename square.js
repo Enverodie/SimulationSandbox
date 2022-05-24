@@ -105,6 +105,11 @@ function removeFromDeaths(square) {
     g.dead.delete(`${square.x},${square.y}`);
 }
 
+function addToPermaDeathQueue(square) {
+    square.calcFade = function() {}; // overwrite previous function so it doesn't get added multiple times
+    MUStates.permaDeathQueue.push(square);
+}
+
 const cS = 25; // color subtraction value
 const minOpacity = .075;
 const deathPenalty = .5;
@@ -131,6 +136,7 @@ function DeadSquare(x, y, color) {
         }; // darkened colors
 
         this.rendercolor = `rgba(${dC.r},${dC.g},${dC.b},${dC.a})`;
+        if (opacityDelta <= minOpacity) addToPermaDeathQueue(this);
     }
     this.calcFade();
 

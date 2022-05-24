@@ -5,8 +5,8 @@ const canvasDead = document.getElementById('canvasDead');
 const canvasGrid = document.getElementById('canvasGrid');
 const canvasOffscreen1 = document.createElement('canvas');
 
-const ctx = canvas.getContext('2d', {alpha: false});
-const deadctx = canvasDead.getContext('2d');
+const deadctx = canvasDead.getContext('2d', {alpha: false});
+const ctx = canvas.getContext('2d');
 const gridctx = canvasGrid.getContext('2d');
 
 // render methods
@@ -35,12 +35,24 @@ const RMethods = new (function() {
         context.scale(scale, scale);
         if (g.dead) {
             for (s of deadArray) {
-                s.draw();
+                s.draw(context);
             }
         }
         context.restore();
     }
     
+    this.utilizePermaDeathQueue = function(context = deadctx) {
+        context.save();
+        context.scale(scale, scale);
+        for (nextUp of MUStates.permaDeathQueue) {
+            g.dead.delete(nextUp.x + ',' + nextUp.y);
+            if (!g.permadead.has(nextUp.x + ',' + nextUp.y)) nextUp.draw(context); // if the cell hasn't already previously been permakilled
+            g.permadead.set(nextUp.x + ',' + nextUp.y, nextUp);
+            MUStates.permaDeathQueue = MUStates.permaDeathQueue.filter(item => item !== nextUp);
+        }
+        context.restore();
+    }
+
     this.drawSquares = (context = ctx) => {
         context.save();
         context.scale(scale, scale);
@@ -138,10 +150,23 @@ const RMethods = new (function() {
             gridctx.translate(MUStates.cameraOffset.x, MUStates.cameraOffset.y); // moves to the camera offset
             this.drawGrid(gridctx, .15);
             gridctx.restore();
+
+            deadctx.save();
+            this.setScrollEffect(deadctx, true); // allows the grid to scroll
+            deadctx.translate(MUStates.cameraOffset.x, MUStates.cameraOffset.y); // moves to the camera offset
+            this.drawDead(g.permadead.values(), deadctx);
+            deadctx.restore();
             
         }
         else {
 
+        }
+        if (MUStates.permaDeathQueue.length > 0) {
+            deadctx.save();
+            this.setScrollEffect(deadctx, true);
+            deadctx.translate(MUStates.cameraOffset.x, MUStates.cameraOffset.y);
+            this.utilizePermaDeathQueue();
+            deadctx.restore();
         }
         this.drawDead();
         this.drawSquares();
