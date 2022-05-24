@@ -39,6 +39,7 @@
                 position: relative;
                 /* overflow-x: hidden; */
                 z-index: 5;
+                cursor: url("cursors/default_no_outline.cur"), default;
             }
 
             #canvasContainer > canvas {
@@ -65,15 +66,19 @@
             }
 
             .canPlace {
-                cursor: copy;
+                cursor: url("cursors/addbox_no_outline.cur"), copy !important;
+            }
+
+            .canDelete {
+                cursor: url("cursors/removebox2_no_outline.cur"), copy !important;
             }
 
             .canGrab {
-                cursor: grab;
+                cursor: grab !important;
             }
 
             .isGrabbing {
-                cursor: grabbing;
+                cursor: grabbing !important;
             }
 
             main {

@@ -66,6 +66,9 @@ function handleKeydownUp(press) {
             case 'Control':
                 canvasContainer.classList.add("canPlace");
                 break;
+            case 'Shift':
+                canvasContainer.classList.add("canDelete");
+                break;
             default:
                 break;
         }
@@ -79,6 +82,9 @@ function handleKeydownUp(press) {
                 break;
             case 'Control':
                 canvasContainer.classList.remove("canPlace");
+                break;
+            case 'Shift':
+                canvasContainer.classList.remove("canDelete");
                 break;
             default:
                 break;
