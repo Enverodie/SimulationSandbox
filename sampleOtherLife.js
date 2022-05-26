@@ -29,29 +29,21 @@ function create1DRuleset(ruleNumber) {
         }
         switch(numberString) {
             case '111':
-                if (binaryRule[0] === '1') return true;
-                else return false;
+                return (binaryRule[0] === '1') ? true : false;
             case '110':
-                if (binaryRule[1] === '1') return true;
-                else return false;
+                return (binaryRule[1] === '1') ? true : false;
             case '101':
-                if (binaryRule[2] === '1') return true;
-                else return false;
+                return (binaryRule[2] === '1') ? true : false;
             case '100':
-                if (binaryRule[3] === '1') return true;
-                else return false;
+                return (binaryRule[3] === '1') ? true : false;
             case '011':
-                if (binaryRule[4] === '1') return true;
-                else return false;
+                return (binaryRule[4] === '1') ? true : false;
             case '010':
-                if (binaryRule[5] === '1') return true;
-                else return false;
+                return (binaryRule[5] === '1') ? true : false;
             case '001':
-                if (binaryRule[6] === '1') return true;
-                else return false;
+                return (binaryRule[6] === '1') ? true : false;
             case '000':
-                if (binaryRule[7] === '1') return true;
-                else return false;
+                return (binaryRule[7] === '1') ? true : false;
             default:
                 console.error("Something went wrong in rule " + ruleNumber + " reproduce rule: " + numberString + " isn't an option.");
                 return false;
