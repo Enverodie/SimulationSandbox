@@ -1,6 +1,12 @@
 // Create rule 30
-(function() {
-    let name = 'rule 30';
+function create1DRuleset(ruleNumber) {
+
+    let binaryRule = parseInt(ruleNumber).toString(2); // converts base 10 ruleset number (for example, rule 30), to binary (11110)
+    while (binaryRule.length < 8) { // converts the binary number to a binary word
+        binaryRule = '0' + binaryRule;
+    }
+
+    let name = 'rule ' + ruleNumber;
     function sphereOfInfluence(x, y) {
         return [ 
             `${x-1},${y+1}`,
@@ -24,72 +30,36 @@
         }
         switch(numberString) {
             case '111':
-                return false;
+                if (binaryRule[0] === '1') return true;
+                else return false;
             case '110':
-                return false;
+                if (binaryRule[1] === '1') return true;
+                else return false;
             case '101':
-                return false;
+                if (binaryRule[2] === '1') return true;
+                else return false;
             case '100':
-                return true;
+                if (binaryRule[3] === '1') return true;
+                else return false;
             case '011':
-                return true;
+                if (binaryRule[4] === '1') return true;
+                else return false;
             case '010':
-                return true;
+                if (binaryRule[5] === '1') return true;
+                else return false;
             case '001':
-                return true;
+                if (binaryRule[6] === '1') return true;
+                else return false;
             case '000':
-                return false;
+                if (binaryRule[7] === '1') return true;
+                else return false;
             default:
-                console.error("Something went wrong in rule30 reproduce rule: " + numberString + " isn't an option.");
+                console.error("Something went wrong in rule " + ruleNumber + " reproduce rule: " + numberString + " isn't an option.");
                 return false;
         }
     }
     addNewLifeform(name, sphereOfInfluence, surviveCondition, reproduceRule, .1);
-})();
+}
 
-// Create rule 110
-(function() {
-    let name = 'rule 110';
-    function sphereOfInfluence(x, y) {
-        return [ 
-            `${x-1},${y+1}`,
-            `${x},${y+1}`,
-            `${x+1},${y+1}`,
-        ];
-    }
-    function surviveCondition(AoI) {
-        return false;
-    }
-    function reproduceRule(AoI, coord) {
-        let c = dissectCoord(coord);
-        let x = c.x, y = c.y;
-        let numberString = "";
-        let lastGenNeighbors = AoI(x, y-2);
-        for (let i = 0; i < lastGenNeighbors.length; i++) { 
-            if (g.living.has(lastGenNeighbors[i])) numberString = numberString + '1';
-            else numberString = numberString + '0';
-        }
-        switch(numberString) {
-            case '111':
-                return false;
-            case '110':
-                return true;
-            case '101':
-                return true;
-            case '100':
-                return false;
-            case '011':
-                return true;
-            case '010':
-                return true;
-            case '001':
-                return true;
-            case '000':
-                return false;
-            default:
-                console.error("Something went wrong in rule30 reproduce rule: " + numberString + " isn't an option.");
-                return false;
-        }
-    }
-    addNewLifeform(name, sphereOfInfluence, surviveCondition, reproduceRule, .1);
-})();
+create1DRuleset(30);
+create1DRuleset(110);
