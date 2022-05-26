@@ -71,7 +71,7 @@ document.addEventListener('mousemove', e => mainMenuDragging.resizeMain(e));
 function setActiveLifeform(button) {
 
     // setup, ensure exclusive use of 'active'
-    let list = [ ...document.getElementById('lifeformChoice').children ];
+    let list = [ ...document.getElementById('lifeformChoice').children, ...document.getElementById('lifeformChoice1D').children ];
     list = list.filter(option => option.classList.contains('active'));
     item = list[0];
     button.classList.add('active');

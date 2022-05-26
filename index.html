@@ -81,6 +81,14 @@
                 cursor: grabbing !important;
             }
 
+            input[type='number'] {
+                color: var(--txtColor);
+                /* background-color: #00000000; */
+                outline: none;
+                border: none;
+                -webkit-appearance: none;
+            }
+
             main {
                 width: var(--mainWidth);
                 background-color: var(--bgColor);
@@ -150,8 +158,13 @@
                 overflow-x: hidden;
             }
 
-            .controls * {
+            .controls > * {
                 display: block;
+                margin-bottom: .8rem;
+            }
+
+            .controls > *:last-child {
+                margin-bottom: 0;
             }
             
             .listChoice {
@@ -162,8 +175,8 @@
             .listChoice * {
                 display: inline-block;
             }
-            
-            .listChoice button {
+
+            .listChoice button, .buttonStyle {
                 border: none;
                 background-color: hsl(260deg, 84%, 40%);
                 cursor: pointer;
@@ -182,15 +195,15 @@
                 background-color: hsl(260deg, 84%, 50%);                
             }
             
-            .listChoice button:not(.active):active {
+            .listChoice button:not(.active):active, .buttonStyle:active {
                 background-color: hsl(260deg, 95%, 30%);                
             }
             
-            .listChoice button:first-child {
+            .listChoice button:first-child, .buttonStyle:first-child {
                 margin-left: 0;
             }
             
-            .listChoice button:last-child {
+            .listChoice button:last-child, .buttonStyle:last-child {
                 margin-right: 0;
             }
 
@@ -212,14 +225,27 @@
                 <div class="mainContent">
                     <h1>SimulationSandbox</h1>
                     <div class="controls">
-                        <label>Place color:
+                        <div>Place color:
                             <input id="currentPlaceColor" type="color" value="#fff000" onchange="{as.placeColor = this.value}">
-                        </label>
+                        </div>
                     </div>
                     <div class="controls">
-                        <label>Select lifeform:</label>
-                        <div id="lifeformChoice" class="listChoice">
-                            <button onclick="setActiveLifeform(this)" class="active">conway</button>
+                        <div>Select 2D lifeform:
+                            <div id="lifeformChoice" class="listChoice">
+                                <button onclick="setActiveLifeform(this)" class="active">conway</button>
+                            </div>
+                        </div>
+                        <div>Select 1D lifeform:
+                            <div id="lifeformChoice1D" class="listChoice">
+                            </div>
+                            <div class="listChoice">
+                                <div class="buttonContainer">
+                                    <input id="add1Dnumberinput" type="number" class="buttonStyle" min="0" max="255">
+                                    <button onclick="{let input = document.getElementById('add1Dnumberinput'); create1DRuleset(input.value); input.value = '';}">
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

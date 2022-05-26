@@ -32,14 +32,14 @@ function reset() {
 
 // handling lifeforms
 
-function addNewLifeform(type, sphereOfInfluence, surviveCondition, reproduceRule, starterHealthAttack) {
+function addNewLifeform(dimensions, type, sphereOfInfluence, surviveCondition, reproduceRule, starterHealthAttack) {
     // right here would be a good place to check if the lifeform already exists
     let lf = new Square(null, null, null, type, sphereOfInfluence, surviveCondition, reproduceRule, starterHealthAttack);
     g.createdLifeforms.push(lf);
     let newButton = document.createElement('button');
     newButton.setAttribute("onclick", "setActiveLifeform(this)");
     newButton.innerText = type;
-    document.getElementById("lifeformChoice").append(newButton);
+    (dimensions == 2) ? document.getElementById("lifeformChoice").append(newButton) : document.getElementById("lifeformChoice1D").append(newButton);
 }
 
 function selectLifeform(type) {

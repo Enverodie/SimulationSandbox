@@ -1,4 +1,7 @@
 function create1DRuleset(ruleNumber) {
+    if (ruleNumber == '') return;
+    let t = parseInt(ruleNumber);
+    if (t < 0 || t > 255) return;
 
     let binaryRule = parseInt(ruleNumber).toString(2); // converts base 10 ruleset number (for example, rule 30), to binary (11110)
     while (binaryRule.length < 8) { // converts the binary number to a binary word
@@ -49,7 +52,7 @@ function create1DRuleset(ruleNumber) {
                 return false;
         }
     }
-    addNewLifeform(name, sphereOfInfluence, surviveCondition, reproduceRule, .1);
+    addNewLifeform(1, name, sphereOfInfluence, surviveCondition, reproduceRule, .1);
 }
 
 create1DRuleset(27);
