@@ -1,4 +1,3 @@
-// Create rule 30
 function create1DRuleset(ruleNumber) {
 
     let binaryRule = parseInt(ruleNumber).toString(2); // converts base 10 ruleset number (for example, rule 30), to binary (11110)
@@ -61,5 +60,8 @@ function create1DRuleset(ruleNumber) {
     addNewLifeform(name, sphereOfInfluence, surviveCondition, reproduceRule, .1);
 }
 
+create1DRuleset(27);
 create1DRuleset(30);
+create1DRuleset(38);
+create1DRuleset(62);
 create1DRuleset(110);
