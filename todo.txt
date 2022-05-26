@@ -1,10 +1,10 @@
 Objectives:
 
+* Add ability to delete in a range
+* Fix grid rendering to make it rangeless
 * Add clickable buttons to control active state
 * Display hotkeys to control state
-* Add ability to delete in a range
 * Cells that were created in one stage and deleted in the same stage should not leave a body
-* Fix grid rendering to make it rangeless
 * Add support for different lifeform tick speed
 * Add conflict
 * Add a timer that keeps track of WHEN to calculate the next stage for any given lifeform

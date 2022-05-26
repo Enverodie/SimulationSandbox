@@ -1,0 +1,193 @@
+:root {
+    --mainWidth: 0%;
+    --bgColor: hsl(260deg, 84%, 11%);
+    --hamburgerHideControlsMargin: .6rem;
+    --txtColor: hsl(230deg, 40%, 86%);
+    --standardTransition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+body {
+    background-color: var(--bgColor);
+    margin: 0;
+    display: flex;
+    width: 100vw;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+#canvasContainer {
+    width: calc(100% - var(--mainWidth));
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    position: relative;
+    /* overflow-x: hidden; */
+    z-index: 5;
+    cursor: url("cursors/default_no_outline.cur"), default;
+}
+
+#canvasContainer > canvas {
+    position: absolute;
+}
+
+#squareInfo {
+    position: absolute;
+    background-color: var(--bgColor);
+    padding: .4rem;
+    padding-right: 1rem;
+    border-radius: .6rem;
+    color: var(--txtColor);
+    z-index: 16;
+    
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+    --timeTaken: .1s;
+    transition: opacity var(--standardTransition) var(--timeTaken), visibility var(--standardTransition) var(--timeTaken);
+}
+
+.canPlace {
+    cursor: url("cursors/addbox_no_outline.cur"), copy !important;
+}
+
+.canDelete {
+    cursor: url("cursors/removebox2_no_outline.cur"), copy !important;
+}
+
+.canGrab {
+    cursor: grab !important;
+}
+
+.isGrabbing {
+    cursor: grabbing !important;
+}
+
+input[type='number'] {
+    color: var(--txtColor);
+    /* background-color: #00000000; */
+    outline: none;
+    border: none;
+    -webkit-appearance: none;
+}
+
+main {
+    width: var(--mainWidth);
+    background-color: var(--bgColor);
+    color: var(--txtColor);
+}
+
+main .border {
+    border-left: solid .5vw hsl(260deg, 84%, 20%);
+    box-sizing: border-box;
+    min-height: 100vh;
+}
+
+.mainContent {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: initial;
+    white-space: nowrap;
+}
+
+main nav {
+    background-color: hsl(260deg, 84%, 40%);
+    width: 100%;
+    padding: .4rem;
+}
+
+main, #canvasContainer {
+    transition: width var(--standardTransition) .3s;
+}
+
+main.dragging, #canvasContainer.dragging {
+    transition: width 0s linear;
+}
+
+.hideMain {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: .3rem;
+    margin: var(--hamburgerHideControlsMargin);
+    margin-right: calc(1.5 * var(--hamburgerHideControlsMargin));
+}
+
+#dragMainBox {
+    position: absolute;
+    top: 0;
+    right: calc(0rem - var(--hamburgerHideControlsMargin));
+    /* background-color: red; */
+    box-sizing: border-box;
+    border: none;
+    width: calc(2 * var(--hamburgerHideControlsMargin));
+    height: inherit;
+    cursor: e-resize;
+
+    transition: border var(--standardTransition) .1s;
+}
+
+#dragMainBox:hover {
+    border-right: 1px solid cyan;
+    border-left: 1px solid cyan;
+}
+
+.controls {
+    background-color: hsl(260deg, 84%, 30%);
+    padding: 1rem .8rem 1rem .8rem;
+    margin: 1rem 0;
+    overflow-x: hidden;
+}
+
+.controls > * {
+    display: block;
+    margin-bottom: .8rem;
+}
+
+.controls > *:last-child {
+    margin-bottom: 0;
+}
+
+.listChoice {
+    overflow-x: auto; /* Gives a horizontal scrollbar but only when necessary */
+    white-space: nowrap;
+}
+
+.listChoice * {
+    display: inline-block;
+}
+
+.listChoice button, .buttonStyle {
+    border: none;
+    background-color: hsl(260deg, 84%, 40%);
+    cursor: pointer;
+    color: var(--txtColor);
+    padding: .8em;
+    margin: .3em;
+}
+
+.listChoice button.active {
+    background-color: hsl(260deg, 84%, 20%);
+    cursor: not-allowed;
+
+}
+
+.listChoice button:not(.active):hover {
+    background-color: hsl(260deg, 84%, 50%);                
+}
+
+.listChoice button:not(.active):active, .buttonStyle:active {
+    background-color: hsl(260deg, 95%, 30%);                
+}
+
+.listChoice button:first-child, .buttonStyle:first-child {
+    margin-left: 0;
+}
+
+.listChoice button:last-child, .buttonStyle:last-child {
+    margin-right: 0;
+}
