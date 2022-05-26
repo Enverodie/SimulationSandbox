@@ -1,0 +1,9 @@
+Form for creating new life:
+Getting AOI/neighborhood:
+    Field x + ___, y + ___ (Negative values allowed)
+    Field "add neighbor" that creates another field above
+
+Getting survive condition:
+    Create a field for each of the AOI neighbors:
+        Field ${x},${y} *must *must not *can survive (radio options - can means not required either way)
+    Create a number input count surviving: minimum ___, maximum ___ (blank to ignore)
