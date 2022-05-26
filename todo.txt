@@ -1,5 +1,7 @@
 Objectives:
 
+* Add clickable buttons to control active state
+* Display hotkeys to control state
 * Add ability to delete in a range
 * Cells that were created in one stage and deleted in the same stage should not leave a body
 * Fix grid rendering to make it rangeless
