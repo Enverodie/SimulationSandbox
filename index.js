@@ -69,6 +69,7 @@ document.addEventListener('mouseup', () => {
 document.addEventListener('mousemove', e => mainMenuDragging.resizeMain(e));
 
 function setActiveLifeform(button) {
+    if (button.classList.contains('active')) return;
 
     // setup, ensure exclusive use of 'active'
     let list = [ ...document.getElementById('lifeformChoice').children, ...document.getElementById('lifeformChoice1D').children ];
