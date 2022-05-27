@@ -165,7 +165,7 @@ const RMethods = new (function() {
         }
 
         if (simControls.isDeleteMode()) {
-            let finalRadius = MUStates.deleteRadius * scale * MUStates.cameraZoom / 2;
+            let finalRadius = MUStates.deleteDiameter * scale * MUStates.cameraZoom / 2;
             deletectx.save();
             deletectx.fillStyle = '#ffffff22';
             deletectx.beginPath();

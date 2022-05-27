@@ -14,7 +14,7 @@ const MUStates = {
     gridIsUpToDate : false,
     cssInTransition : false,
     permaDeathQueue : [],
-    deleteRadius : 1,
+    deleteDiameter : 1,
 }
     
 // active state
@@ -74,13 +74,13 @@ const grf = {
         };
     },
 
-    setDeleteRadius: function(addend) {
+    setdeleteDiameter: function(addend) {
         let scrollModifier = 10;
         let addendfull = Math.ceil(addend * scrollModifier);
-        let dR = Math.min(MUStates.deleteRadius + addendfull, MAX_DELETE_RADIUS);
+        let dR = Math.min(MUStates.deleteDiameter + addendfull, MAX_DELETE_RADIUS);
         dR = Math.ceil(dR);
         dR = Math.max(dR, MIN_DELETE_RADIUS);
-        MUStates.deleteRadius = dR;
+        MUStates.deleteDiameter = dR;
     }
 }
 
@@ -113,6 +113,22 @@ const simControls = new (function() {
 // square placement/targetting functions
 const spf = {
 
+    getCoordsInCircle: function(originPoint, diameter) { // origin point is relative to the viewport, not the ctx
+        let returnArr = [];
+        let b = grf.pointToGridCoord(originPoint.x, originPoint.y);
+        let radius = Math.floor(diameter / 2);
+        if (radius === 0) radius = 1;
+        let yi;
+        for (let i = -radius + 1; i < radius; i++) {
+            yi = Math.sqrt( -Math.pow(i,2) + Math.pow(radius, 2))
+            yi = Math.ceil(yi);
+            for (let j = -yi + 1; j < yi; j++) {
+                returnArr.push(`${b.x + i},${b.y + j}`);
+            }
+        }
+        return returnArr;
+    },
+
     placeSquare: function(e) {
         let x = e.x, y = e.y;
         let d = grf.originDistanceFromDrawOrigin();
@@ -123,9 +139,11 @@ const spf = {
     },
     
     deleteSquare: function(e) {
-        let x = e.x, y = e.y;
-        let sq = grf.findLiveSquare(x, y);
-        if (sq !== undefined) sq.kill();
+        let coords = spf.getCoordsInCircle(e, MUStates.deleteDiameter);
+        for (c of coords) {
+            let sq = g.living.get(c);
+            if (sq !== undefined) sq.kill();
+        } 
     },
 }
 

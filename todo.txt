@@ -1,6 +1,6 @@
 Objectives:
 
-* Add ability to delete in a range
+* Change delete range rendering method to boxes
 * Fix grid rendering to make it rangeless
 * Add clickable buttons to control active state
 * Display hotkeys to control state

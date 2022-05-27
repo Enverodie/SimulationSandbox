@@ -183,10 +183,10 @@ function adjustZoom(zoomAmount, zoomFactor) {
     }
 }
 
-function adjustDeleteRadius(scrollAmount) {
+function adjustdeleteDiameter(scrollAmount) {
     if (!simControls.isDeleteMode()) return; // returns if not in "ready to delete" state
     console.log("Scroll amount:", scrollAmount);
-    grf.setDeleteRadius(scrollAmount);
+    grf.setdeleteDiameter(scrollAmount);
 }
 
 canvasContainer.addEventListener('mousedown', onPointerDown)
@@ -195,4 +195,4 @@ canvasContainer.addEventListener('mouseup', onPointerUp)
 canvasContainer.addEventListener('touchend',  (e) => handleTouch(e, onPointerUp))
 canvasContainer.addEventListener('mousemove', onPointerMove)
 canvasContainer.addEventListener('touchmove', (e) => handleTouch(e, onPointerMove))
-canvasContainer.addEventListener('wheel', (e) => {adjustZoom(e.deltaY*SCROLL_SENSITIVITY); adjustDeleteRadius(e.deltaY*SCROLL_SENSITIVITY)})
+canvasContainer.addEventListener('wheel', (e) => {adjustZoom(e.deltaY*SCROLL_SENSITIVITY); adjustdeleteDiameter(e.deltaY*SCROLL_SENSITIVITY)})
