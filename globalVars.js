@@ -33,6 +33,14 @@ const as = {
 
 // grid related functions
 const grf = {
+
+    // pass a coordinate string, get an object with the numbers
+    dissectCoord: function(coord) {
+        let x = Number.parseInt(coord.slice(0,coord.indexOf(',')));
+        let y = Number.parseInt(coord.slice(coord.indexOf(',') + 1, coord.length));
+        return {x: x, y: y};
+    },
+
     // calculates the number of boxes within a distance, accounting for zoom & scale but not offset (one dimensional)
     calcBoxDistance: function(pixelDistance) {
         return -Math.ceil(pixelDistance / (scale * MUStates.cameraZoom));
@@ -74,7 +82,7 @@ const grf = {
         };
     },
 
-    setdeleteDiameter: function(addend) {
+    setDeleteDiameter: function(addend) {
         let scrollModifier = 10;
         let addendfull = Math.ceil(addend * scrollModifier);
         let dR = Math.min(MUStates.deleteDiameter + addendfull, MAX_DELETE_RADIUS);
@@ -127,6 +135,22 @@ const spf = {
             }
         }
         return returnArr;
+    },
+
+    // returns coordinates of the circle's outer edges ordered clockwise
+    // HASN'T BEEN TESTED OR USED
+    getCoordsOfCircle: function(originPoint, diameter) { 
+        let returnPos = [], returnNeg = [];
+        let b = grf.pointToGridCoord(originPoint.x, originPoint.y);
+        let radius = Math.floor(diameter / 2);
+        if (radius === 0) radius = 1;
+        for (let i = -radius + 1; i < radius; i++) {
+            yi = Math.sqrt( -Math.pow(i,2) + Math.pow(radius, 2))
+            yi = Math.ceil(yi);
+            returnPos.push(`${b.x + i},${b.y + yi}`);
+            returnNeg.unshift(`${b.x + i},${b.y - yi + 1}`) // watch this +1, might cause errors
+        }
+        return [...returnPos, ...returnNeg];
     },
 
     placeSquare: function(e) {

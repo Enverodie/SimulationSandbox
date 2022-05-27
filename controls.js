@@ -186,7 +186,7 @@ function adjustZoom(zoomAmount, zoomFactor) {
 function adjustdeleteDiameter(scrollAmount) {
     if (!simControls.isDeleteMode()) return; // returns if not in "ready to delete" state
     console.log("Scroll amount:", scrollAmount);
-    grf.setdeleteDiameter(scrollAmount);
+    grf.setDeleteDiameter(scrollAmount);
 }
 
 canvasContainer.addEventListener('mousedown', onPointerDown)

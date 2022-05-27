@@ -33,7 +33,7 @@ function Square(x, y, color, type, sphereOfInfluence, surviveCondition, reproduc
         // cannot spawn: return false;
         if (g.living.has(coord)) return false;
         let count = 0;
-        let c = dissectCoord(coord);
+        let c = grf.dissectCoord(coord);
         let x1 = c.x, y1 = c.y;
         for (neighbor of AoI(x1, y1)) {
             if (g.living.has(neighbor)) count++;
@@ -73,7 +73,7 @@ function Square(x, y, color, type, sphereOfInfluence, surviveCondition, reproduc
         // executes the lifeform's reproduceRule on that string
         for (cstring of this.sphereOfInfluence(this.x, this.y)) {
             if (this.reproduceRule(this.sphereOfInfluence, cstring)) {
-                let c = dissectCoord(cstring);
+                let c = grf.dissectCoord(cstring);
                 let x1 = c.x, y1 = c.y;
                 let sq = new Square(x1, y1, this.color, this.type, this.sphereOfInfluence, this.surviveCondition, this.reproduceRule, this.originalHA);
                 removeFromDeaths(sq); // just in case this coordinate had died previously
@@ -145,11 +145,4 @@ function DeadSquare(x, y, color) {
         context.fillRect(this.x, this.y, 1, 1);
     }
 
-}
-
-// pass a coordinate string, get an object with the numbers
-function dissectCoord(coord) {
-    let x = Number.parseInt(coord.slice(0,coord.indexOf(',')));
-    let y = Number.parseInt(coord.slice(coord.indexOf(',') + 1, coord.length));
-    return {x: x, y: y};
 }

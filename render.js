@@ -167,10 +167,25 @@ const RMethods = new (function() {
         if (simControls.isDeleteMode()) {
             let finalRadius = MUStates.deleteDiameter * scale * MUStates.cameraZoom / 2;
             deletectx.save();
+            this.setScrollEffect(deletectx, true); 
+            deletectx.translate(MUStates.cameraOffset.x, MUStates.cameraOffset.y); 
+            deletectx.scale(scale, scale);
             deletectx.fillStyle = '#ffffff22';
-            deletectx.beginPath();
-            deletectx.arc(MUStates.previousCoord.x, MUStates.previousCoord.y, finalRadius, 0, 2*Math.PI);
-            deletectx.fill();
+            for (coord of spf.getCoordsInCircle(MUStates.previousCoord, MUStates.deleteDiameter)) {
+                let move = grf.dissectCoord(coord);
+                deletectx.fillRect(move.x, move.y, 1, 1);
+            }
+            // deletectx.beginPath();
+            // let movechain = spf.getCoordsOfCircle(MUStates.previousCoord, MUStates.deleteDiameter);
+            // let initialMove = grf.dissectCoord(movechain[movechain.length-1]);
+            // deletectx.moveTo(initialMove.x, initialMove.y);
+            // for (coord of movechain) {
+            //     let move = grf.dissectCoord(coord);
+            //     deletectx.lineTo(move.x, move.y);
+            //     // console.log("moving to: ", move.x, move.y)
+            // }
+            // deletectx.closePath();
+            // deletectx.fill();
             deletectx.restore();
         } 
 
