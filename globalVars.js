@@ -1,7 +1,7 @@
 const scale = 20; // multiplier for square size
 const gridThickness = .035;
 const MAX_ZOOM = 5;
-const MIN_ZOOM = 0.05;
+const MIN_ZOOM = 0.01;
 const SCROLL_SENSITIVITY = 0.001;
 const MAX_DELETE_RADIUS = 100;
 const MIN_DELETE_RADIUS = .5;

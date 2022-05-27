@@ -149,7 +149,7 @@ const RMethods = new (function() {
             
             gridctx.save();
             this.setScrollEffect(gridctx, true); // allows the grid to scroll
-            gridctx.translate(MUStates.cameraOffset.x, MUStates.cameraOffset.y); // moves to the camera offset
+            gridctx.translate(MUStates.cameraOffset.x % scale, MUStates.cameraOffset.y % scale); // moves to the camera offset
             this.drawGrid(gridctx, .15);
             gridctx.restore();
 

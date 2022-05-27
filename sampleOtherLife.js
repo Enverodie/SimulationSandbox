@@ -21,7 +21,7 @@ function create1DRuleset(ruleNumber) {
         return false;
     }
     function reproduceRule(AoI, coord) {
-        let c = dissectCoord(coord);
+        let c = grf.dissectCoord(coord);
         let x = c.x, y = c.y;
         let numberString = "";
         // next generation moves up, so y-1 = this location

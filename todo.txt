@@ -1,7 +1,5 @@
 Objectives:
 
-* Change delete range rendering method to boxes
-* Fix grid rendering to make it rangeless
 * Add clickable buttons to control active state
 * Display hotkeys to control state
 * Cells that were created in one stage and deleted in the same stage should not leave a body
@@ -16,3 +14,4 @@ Considerations:
 * MOVE ALL THE as (ACTIVE STATE) VARIABLES INTO simControls BECAUSE THEY BASICALLY DO THE SAME THING
 * Add a class "lifeforms" that stores information about each created lifeform (perhaps including all their maps)
 * Add a counter in a corner of the screen that shows what generation the simulation is on
+* Improve rendering strategy for delete cell overlay
