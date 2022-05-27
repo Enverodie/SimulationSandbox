@@ -3,11 +3,12 @@ const canvasContainer = document.getElementById('canvasContainer');
 const canvas = document.getElementById('canvas');
 const canvasDead = document.getElementById('canvasDead');
 const canvasGrid = document.getElementById('canvasGrid');
-const canvasOffscreen1 = document.createElement('canvas');
+const deleteGrid = document.getElementById('canvasDeleteHighlight');
 
 const deadctx = canvasDead.getContext('2d', {alpha: false});
 const ctx = canvas.getContext('2d');
 const gridctx = canvasGrid.getContext('2d');
+const deletectx = deleteGrid.getContext('2d');
 
 // render methods
 const RMethods = new (function() {
@@ -133,6 +134,7 @@ const RMethods = new (function() {
         
     this.advanceFrame = () => {
         this.sizeCanvas(ctx.canvas);
+        this.sizeCanvas(deletectx.canvas);
         this.setScrollEffect(ctx, true);
         
         let updateEverything = false;
@@ -161,7 +163,18 @@ const RMethods = new (function() {
         else {
 
         }
-        if (MUStates.permaDeathQueue.length > 0) {
+
+        if (simControls.isDeleteMode()) {
+            let finalRadius = MUStates.deleteRadius * scale * MUStates.cameraZoom / 2;
+            deletectx.save();
+            deletectx.fillStyle = '#ffffff22';
+            deletectx.beginPath();
+            deletectx.arc(MUStates.previousCoord.x, MUStates.previousCoord.y, finalRadius, 0, 2*Math.PI);
+            deletectx.fill();
+            deletectx.restore();
+        } 
+
+        if (MUStates.permaDeathQueue.length > 0) { // if there are cells queued for render in permadeath layer (there usually are)
             deadctx.save();
             this.setScrollEffect(deadctx, true);
             deadctx.translate(MUStates.cameraOffset.x, MUStates.cameraOffset.y);

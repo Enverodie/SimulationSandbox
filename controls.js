@@ -1,43 +1,3 @@
-// Simulation controls
-/*  Useful in that some other event may be triggered with a combination of button presses
-*/
-const simControls = new (function() {
-    let dragStart = { x: 0, y: 0 };
-    this.getDrag = function() {return dragStart}
-    this.setDrag = function(x, y) {dragStart.x = x, dragStart.y = y}
-
-    this.playPause = function() {
-        as.playing = !as.playing;
-        if (as.playing) {
-            runLoop(); // needs to be restarted
-        }
-    }
-
-    this.spaceDown = false;
-    this.holdLclick = false;
-    this.initialPinchDistance = null;
-    this.lastZoom = MUStates.cameraZoom;
-});
-
-// square placement/targetting functions
-const spf = {
-
-    placeSquare: function(e) {
-        let x = e.x, y = e.y;
-        let d = grf.originDistanceFromDrawOrigin();
-        let dx = d.x - x, dy = d.y - y;
-        let bx = grf.calcBoxDistance(dx);
-        let by = grf.calcBoxDistance(dy);
-        createSquareOfType(as.placeType, bx, by, as.placeColor);
-    },
-    
-    deleteSquare: function(e) {
-        let x = e.x, y = e.y;
-        let sq = grf.findLiveSquare(x, y);
-        if (sq !== undefined) sq.kill();
-    },
-}
-
 // handle keyboard inputs
 
 // this function handles tap inputs
@@ -67,7 +27,8 @@ function handleKeydownUp(press) {
                 canvasContainer.classList.add("canPlace");
                 break;
             case 'Shift':
-                canvasContainer.classList.add("canDelete");
+                canvasContainer.classList.add("isDeleteMode");
+                simControls.shiftDown = true;
                 break;
             default:
                 break;
@@ -84,7 +45,8 @@ function handleKeydownUp(press) {
                 canvasContainer.classList.remove("canPlace");
                 break;
             case 'Shift':
-                canvasContainer.classList.remove("canDelete");
+                canvasContainer.classList.remove("isDeleteMode");
+                simControls.shiftDown = false;
                 break;
             default:
                 break;
@@ -128,7 +90,7 @@ function onPointerDown(e) {
         }
         // delete mode
         if (!simControls.spaceDown && e.shiftKey) { // if not holding space and control clicking
-            as.deleteMode = true;
+            as.deleting = true;
             spf.deleteSquare(e);
         }
     }
@@ -149,7 +111,7 @@ function onPointerUp(e) {
             simControls.lastZoom = MUStates.cameraZoom;
         }
         if (as.placeMode) as.placeMode = !as.placeMode;
-        if (as.deleteMode) as.deleteMode = !as.deleteMode;
+        if (as.deleting) as.deleting = !as.deleting;
     }
 }
 
@@ -166,7 +128,7 @@ function onPointerMove(e) {
     if (as.placeMode) {
         spf.placeSquare(e);
     }
-    if (as.deleteMode) {
+    if (as.deleting) {
         spf.deleteSquare(e);
     }
 }
@@ -200,9 +162,13 @@ function handlePinch(e) {
     }
 }
 
+// function handleWheel(event) {
+//     
+// }
+
 // controls the zoom
 function adjustZoom(zoomAmount, zoomFactor) {
-    if (!as.dragging) {
+    if (!as.dragging && !simControls.isDeleteMode()) {
         if (zoomAmount) {
             MUStates.cameraZoom -= zoomAmount
         }
@@ -217,10 +183,16 @@ function adjustZoom(zoomAmount, zoomFactor) {
     }
 }
 
+function adjustDeleteRadius(scrollAmount) {
+    if (!simControls.isDeleteMode()) return; // returns if not in "ready to delete" state
+    console.log("Scroll amount:", scrollAmount);
+    grf.setDeleteRadius(scrollAmount);
+}
+
 canvasContainer.addEventListener('mousedown', onPointerDown)
 canvasContainer.addEventListener('touchstart', (e) => handleTouch(e, onPointerDown))
 canvasContainer.addEventListener('mouseup', onPointerUp)
 canvasContainer.addEventListener('touchend',  (e) => handleTouch(e, onPointerUp))
 canvasContainer.addEventListener('mousemove', onPointerMove)
 canvasContainer.addEventListener('touchmove', (e) => handleTouch(e, onPointerMove))
-canvasContainer.addEventListener('wheel', (e) => adjustZoom(e.deltaY*SCROLL_SENSITIVITY))
+canvasContainer.addEventListener('wheel', (e) => {adjustZoom(e.deltaY*SCROLL_SENSITIVITY); adjustDeleteRadius(e.deltaY*SCROLL_SENSITIVITY)})

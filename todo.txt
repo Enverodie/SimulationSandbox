@@ -13,5 +13,6 @@ Objectives:
 * Fix bug where cursor doesn't update unless moved
 
 Considerations:
+* MOVE ALL THE as (ACTIVE STATE) VARIABLES INTO simControls BECAUSE THEY BASICALLY DO THE SAME THING
 * Add a class "lifeforms" that stores information about each created lifeform (perhaps including all their maps)
 * Add a counter in a corner of the screen that shows what generation the simulation is on

@@ -54,7 +54,7 @@ body {
     cursor: url("cursors/addbox_no_outline.cur"), copy !important;
 }
 
-.canDelete {
+.isDeleteMode {
     cursor: url("cursors/removebox2_no_outline.cur"), copy !important;
 }
 

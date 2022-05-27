@@ -1,8 +1,10 @@
 const scale = 20; // multiplier for square size
 const gridThickness = .035;
-const MAX_ZOOM = 5
-const MIN_ZOOM = 0.05
-const SCROLL_SENSITIVITY = 0.001
+const MAX_ZOOM = 5;
+const MIN_ZOOM = 0.05;
+const SCROLL_SENSITIVITY = 0.001;
+const MAX_DELETE_RADIUS = 100;
+const MIN_DELETE_RADIUS = .5;
 
 // manually updated states
 const MUStates = {
@@ -12,6 +14,7 @@ const MUStates = {
     gridIsUpToDate : false,
     cssInTransition : false,
     permaDeathQueue : [],
+    deleteRadius : 1,
 }
     
 // active state
@@ -23,17 +26,19 @@ const as = {
     dragging    : false,
     playing     : false,
     placeMode   : false,
-    deleteMode  : false,
+    deleting    : false,
     placeColor  : document.getElementById('currentPlaceColor').value,
     placeType   : 'conway',
 }
 
 // grid related functions
 const grf = {
+    // calculates the number of boxes within a distance, accounting for zoom & scale but not offset (one dimensional)
     calcBoxDistance: function(pixelDistance) {
         return -Math.ceil(pixelDistance / (scale * MUStates.cameraZoom));
     },
     
+    // calculates the distance (in pixels & in boxes) between the screen's top left corner and ctx's origin 0,0
     originDistanceFromDrawOrigin: function() {
         let cDim = canvasContainer.getBoundingClientRect();
         let sOrigX = cDim.width/2, sOrigY = cDim.height/2;
@@ -43,14 +48,20 @@ const grf = {
         let bxDistY = this.calcBoxDistance(pxDistY);
         return {x : pxDistX, y: pxDistY, xb: bxDistX, yb: bxDistY};
     },
-    
-    // returns the square within any given viewport coordinate, or undefined if it isn't alive
-    findLiveSquare: function(x, y) {
+
+    // returns the context coordinate of a viewport x and y position (accounts for zoom, scale, and offset)
+    pointToGridCoord: function(x, y) {
         let d = this.originDistanceFromDrawOrigin();
         let dx = d.x - x, dy = d.y - y;
         let bx = this.calcBoxDistance(dx);
         let by = this.calcBoxDistance(dy);
-        return g.living.get(`${bx},${by}`);
+        return {x: bx, y: by};
+    },
+    
+    // returns the square within any given viewport coordinate, or undefined if it isn't alive
+    findLiveSquare: function(x, y) {
+        let c = this.pointToGridCoord(x,y);
+        return g.living.get(`${c.x},${c.y}`);
     },
 
     extractUseful: function(square) {
@@ -61,7 +72,60 @@ const grf = {
             reproduceRule: square.reproduceRule,
             starterHealthAttack: square.starterHealthAttack,
         };
+    },
+
+    setDeleteRadius: function(addend) {
+        let scrollModifier = 10;
+        let addendfull = Math.ceil(addend * scrollModifier);
+        let dR = Math.min(MUStates.deleteRadius + addendfull, MAX_DELETE_RADIUS);
+        dR = Math.ceil(dR);
+        dR = Math.max(dR, MIN_DELETE_RADIUS);
+        MUStates.deleteRadius = dR;
     }
 }
 
+// Simulation controls
+/*  Useful in that some other event may be triggered with a combination of button presses
+*/
+const simControls = new (function() {
+    let dragStart = { x: 0, y: 0 };
+    this.getDrag = function() {return dragStart}
+    this.setDrag = function(x, y) {dragStart.x = x, dragStart.y = y}
+
+    this.playPause = function() {
+        as.playing = !as.playing;
+        if (as.playing) {
+            runLoop(); // needs to be restarted
+        }
+    }
+
+    this.spaceDown = false;
+    this.shiftDown = false;
+    this.holdLclick = false;
+    this.initialPinchDistance = null;
+    this.lastZoom = MUStates.cameraZoom;
+
+    this.isDeleteMode = function() {
+        return (!this.spaceDown && this.shiftDown);
+    }
+});
+
+// square placement/targetting functions
+const spf = {
+
+    placeSquare: function(e) {
+        let x = e.x, y = e.y;
+        let d = grf.originDistanceFromDrawOrigin();
+        let dx = d.x - x, dy = d.y - y;
+        let bx = grf.calcBoxDistance(dx);
+        let by = grf.calcBoxDistance(dy);
+        createSquareOfType(as.placeType, bx, by, as.placeColor);
+    },
+    
+    deleteSquare: function(e) {
+        let x = e.x, y = e.y;
+        let sq = grf.findLiveSquare(x, y);
+        if (sq !== undefined) sq.kill();
+    },
+}
 
