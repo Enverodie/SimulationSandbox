@@ -1,9 +1,12 @@
 const canvasContainer = document.getElementById('canvasContainer');
+const canvasGroup = document.getElementById('canvasContainerCanvasses');
 
 const canvas = document.getElementById('canvas');
 const canvasDead = document.getElementById('canvasDead');
 const canvasGrid = document.getElementById('canvasGrid');
 const deleteGrid = document.getElementById('canvasDeleteHighlight');
+
+const onCanvasButtons = [...document.querySelectorAll('#canvasControls button'), document.getElementById('hideMain')] // useful to prevent square info display when hovering over these elements
 
 const deadctx = canvasDead.getContext('2d', {alpha: false});
 const ctx = canvas.getContext('2d');
@@ -13,7 +16,6 @@ const deletectx = deleteGrid.getContext('2d');
 // render methods
 const RMethods = new (function() {
         
-    // TODO: make this infinite
     this.drawGrid = (context, opacity = .2) => {
         let cDim = canvasContainer.getBoundingClientRect();
         context.save();
@@ -93,7 +95,6 @@ const RMethods = new (function() {
     }
     
     this.sizeCanvasses = () => {
-        console.log(this);
         this.sizeCanvas(canvas);
         this.sizeCanvas(canvasDead);
         this.sizeCanvas(canvasGrid);
@@ -101,6 +102,9 @@ const RMethods = new (function() {
     }
     
     this.addHTMLInfoPanel = () => {
+        for (ele of onCanvasButtons) {
+            if (MUStates.previousCoord.target === ele) return; // If the pointer was previously on a button
+        }
         let maxOpacity = .8;
         let remSpacing = .6;
         let sq = grf.findLiveSquare(MUStates.previousCoord.x, MUStates.previousCoord.y);

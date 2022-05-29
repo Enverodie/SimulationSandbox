@@ -8,7 +8,7 @@ const MIN_DELETE_RADIUS = .5;
 
 // manually updated states
 const MUStates = {
-    previousCoord : {x: 0, y: 0}, // current mouse position, updated with move listeners (in controls.js)
+    previousCoord : {x: 0, y: 0, target: null}, // current mouse position, updated with move listeners (in controls.js)
     cameraOffset : { x: 0, y: 0 },
     cameraZoom : .5,
     gridIsUpToDate : false,

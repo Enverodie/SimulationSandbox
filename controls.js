@@ -117,19 +117,19 @@ function onPointerUp(e) {
 
 // This function checks gamestates. Whenever the mouse is moved, period.
 function onPointerMove(e) {
-    e = getEventLocation(e);
-    MUStates.previousCoord = {x: e.x, y: e.y};
+    let ec = getEventLocation(e);
+    MUStates.previousCoord = {x: ec.x, y: ec.y, target: e.target};
     if (as.dragging) {
         let d = simControls.getDrag();
-        MUStates.cameraOffset.x = e.x/MUStates.cameraZoom - d.x; 
-        MUStates.cameraOffset.y = e.y/MUStates.cameraZoom - d.y;
+        MUStates.cameraOffset.x = ec.x/MUStates.cameraZoom - d.x; 
+        MUStates.cameraOffset.y = ec.y/MUStates.cameraZoom - d.y;
         MUStates.gridIsUpToDate = false;
     }
     if (as.placeMode) {
-        spf.placeSquare(e);
+        spf.placeSquare(ec);
     }
     if (as.deleting) {
-        spf.deleteSquare(e);
+        spf.deleteSquare(ec);
     }
 }
 
@@ -162,10 +162,6 @@ function handlePinch(e) {
     }
 }
 
-// function handleWheel(event) {
-//     
-// }
-
 // controls the zoom
 function adjustZoom(zoomAmount, zoomFactor) {
     if (!as.dragging && !simControls.isDeleteMode()) {
@@ -185,7 +181,6 @@ function adjustZoom(zoomAmount, zoomFactor) {
 
 function adjustdeleteDiameter(scrollAmount) {
     if (!simControls.isDeleteMode()) return; // returns if not in "ready to delete" state
-    console.log("Scroll amount:", scrollAmount);
     grf.setDeleteDiameter(scrollAmount);
 }
 

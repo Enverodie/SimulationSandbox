@@ -4,6 +4,7 @@
     --hamburgerHideControlsMargin: .6rem;
     --txtColor: hsl(230deg, 40%, 86%);
     --standardTransition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --minimumDistanceFromMain: calc(1.5 * var(--hamburgerHideControlsMargin));
 }
 
 body {
@@ -27,7 +28,7 @@ body {
     cursor: url("cursors/default_no_outline.cur"), default;
 }
 
-#canvasContainer > canvas {
+#canvasContainer canvas {
     position: absolute;
 }
 
@@ -66,6 +67,72 @@ body {
     cursor: grabbing !important;
 }
 
+#canvasControls {
+
+    --leftCorner: 0vw;
+
+    position: absolute;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    bottom: 0%; /* Was 1% */
+    left: var(--leftCorner);
+    width: 100%;
+    height: 15vw;
+    max-height: 12vh;
+    max-width: calc(100% - var(--minimumDistanceFromMain) - var(--leftCorner));
+    overflow: hidden;
+}
+
+#canvasControls button {
+
+    --cornerRadius: 0 1rem 0rem 0;
+
+    border: none;
+    width: 7vw;
+    height: 60%;
+    margin: 0 .14vw;
+    cursor: pointer;
+    background-color: var(--bgColor);
+}
+
+#canvasControls button img {
+    height: 80%;
+    width: auto;
+    color: hsl(260deg, 84%, 40%);
+    mix-blend-mode: overlay;
+}
+
+#canvasControls > button:first-child, #canvasControls > button:last-child {
+    margin: 0;
+}
+
+#canvasControls > button:last-child {
+    border-radius: var(--cornerRadius);
+}
+
+#canvasControls > button:first-child {
+    position: relative;
+    height: 100%;
+    width: 12vw !important;
+    height: 100% !important;
+    background-color: rgb(152, 5, 5);
+    color: var(--txtColor);
+    border-radius: var(--cornerRadius);
+}
+
+#canvasContainer #canvasContainerCanvasses {
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    position: relative;
+    /* overflow-x: hidden; */
+    z-index: 5;
+}
+
 input[type='number'] {
     color: var(--txtColor);
     /* background-color: #00000000; */
@@ -100,7 +167,7 @@ main nav {
     padding: .4rem;
 }
 
-main, #canvasContainer {
+main, #canvasContainer, #canvasContainerCanvasses {
     transition: width var(--standardTransition) .3s;
 }
 
@@ -108,13 +175,13 @@ main.dragging, #canvasContainer.dragging {
     transition: width 0s linear;
 }
 
-.hideMain {
+#hideMain {
     position: absolute;
     top: 0;
     right: 0;
     padding: .3rem;
     margin: var(--hamburgerHideControlsMargin);
-    margin-right: calc(1.5 * var(--hamburgerHideControlsMargin));
+    margin-right: var(--minimumDistanceFromMain);
 }
 
 #dragMainBox {

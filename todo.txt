@@ -2,6 +2,7 @@ Objectives:
 
 * Add clickable buttons to control active state
 * Display hotkeys to control state
+* Stop highlighting when dragging main
 * Cells that were created in one stage and deleted in the same stage should not leave a body
 * Add support for different lifeform tick speed
 * Add conflict

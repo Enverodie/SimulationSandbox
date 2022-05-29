@@ -15,12 +15,21 @@
     </head>
     <body>
         <div id="canvasContainer">
-            <button class="hideMain" style="z-index: 7" onclick="mainMenuDragging.toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg"></button>
-            <div id="dragMainBox" style="z-index: 6"></div>
-            <canvas id="canvasGrid" style="z-index: 5"></canvas>
-            <canvas id="canvasDeleteHighlight" style="z-index: 4"></canvas>
-            <canvas id="canvas" style="z-index: 3;"></canvas>
-            <canvas id="canvasDead" style="z-index: 2"></canvas>
+            <button id="hideMain" style="z-index: 5" onclick="mainMenuDragging.toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg" alt="navigate"></button>
+            <div id="dragMainBox" style="z-index: 4"></div>
+            <div id="canvasControls" style="z-index: 3">
+                <button id="playpause">||</button>
+                <button></button>
+                <button>
+                    <img src="https://www.recycling.com/wp-content/uploads/recycling%20symbols/black/Black%20Recycling%20Symbol%20%28U%2B267B%29.png" alt="reset">
+                </button>
+            </div>
+            <div id="canvasContainerCanvasses" style="z-index: 2">
+                <canvas id="canvasGrid" style="z-index: 5"></canvas>
+                <canvas id="canvasDeleteHighlight" style="z-index: 4"></canvas>
+                <canvas id="canvas" style="z-index: 3;"></canvas>
+                <canvas id="canvasDead" style="z-index: 2"></canvas>
+            </div>
         </div>
         <main>
             <div class="border">
