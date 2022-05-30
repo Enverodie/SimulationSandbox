@@ -1,6 +1,7 @@
 :root {
     --mainWidth: 0%;
     --bgColor: hsl(260deg, 84%, 11%);
+    --bgOutline: hsl(260deg, 84%, 20%);
     --hamburgerHideControlsMargin: .6rem;
     --txtColor: hsl(230deg, 40%, 86%);
     --standardTransition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -80,7 +81,7 @@ body {
     left: var(--leftCorner);
     width: 100%;
     height: 15vw;
-    max-height: 12vh;
+    max-height: 15vh;
     max-width: calc(100% - var(--minimumDistanceFromMain) - var(--leftCorner));
     overflow: hidden;
 }
@@ -89,19 +90,22 @@ body {
 
     --cornerRadius: 0 1rem 0rem 0;
 
-    border: none;
+    border: var(--bgOutline) solid .33rem;
     width: 7vw;
     height: 60%;
     margin: 0 .14vw;
     cursor: pointer;
     background-color: var(--bgColor);
+
+    transition: height var(--standardTransition) .15s;
 }
 
 #canvasControls button img {
-    height: 80%;
+    height: 75%;
     width: auto;
-    color: hsl(260deg, 84%, 40%);
-    mix-blend-mode: overlay;
+    
+    transform: rotate(-8deg);
+    transition: height var(--standardTransition) .1s, transform var(--standardTransition) .1s;
 }
 
 #canvasControls > button:first-child, #canvasControls > button:last-child {
@@ -114,12 +118,35 @@ body {
 
 #canvasControls > button:first-child {
     position: relative;
-    height: 100%;
     width: 12vw !important;
-    height: 100% !important;
+    height: 80%;
     background-color: rgb(152, 5, 5);
     color: var(--txtColor);
     border-radius: var(--cornerRadius);
+}
+
+#canvasControls button:hover {
+    height: 100%;
+}
+
+#canvasControls button:hover img {
+    height: 80%;
+    transform: rotate(360deg);
+}
+
+/* #canvasControls button:active {
+    height: 95%;
+} */
+
+#canvasControls button:active img {
+    transition: height var(--standardTransition) 50ms, transform var(--standardTransition) 50ms;
+
+    height: 65%;
+    transform: rotate(355deg);
+}
+
+#canvasControls button.active {
+    background-color: green;
 }
 
 #canvasContainer #canvasContainerCanvasses {
@@ -148,7 +175,7 @@ main {
 }
 
 main .border {
-    border-left: solid .5vw hsl(260deg, 84%, 20%);
+    border-left: solid .5vw var(--bgOutline);
     box-sizing: border-box;
     min-height: 100vh;
 }
@@ -238,7 +265,7 @@ main.dragging, #canvasContainer.dragging {
 }
 
 .listChoice button.active {
-    background-color: hsl(260deg, 84%, 20%);
+    background-color: var(--bgOutline);
     cursor: not-allowed;
 
 }
