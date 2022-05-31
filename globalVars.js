@@ -24,7 +24,6 @@ const MUStates = {
     */
 const as = {
     playing     : false,
-    placeMode   : false,
     deleting    : false,
     placeColor  : document.getElementById('currentPlaceColor').value,
     placeType   : 'conway',
@@ -125,9 +124,7 @@ const simControls = new (function() {
     this.pressSpace = function(isPressedDown) {
         if (isPressedDown) {
             this.spaceDown = true;
-            if (this.canDrag()) {
-                this.setReadyToDrag(true);
-            } 
+            if (this.canDrag()) this.setReadyToDrag(true);
         }
         else {
             this.spaceDown = false;
@@ -138,11 +135,11 @@ const simControls = new (function() {
     this.pressControl = function(isPressedDown) {
         if (isPressedDown) {
             this.ctrlDown = true;
-            canvasContainer.classList.add("canPlace");
+            if (this.canPlace()) this.setReadyToPlace(true);
         }
         else {
             this.ctrlDown = false;
-            canvasContainer.classList.remove("canPlace");
+            this.setReadyToPlace(false);
         }
     }
 
@@ -159,6 +156,7 @@ const simControls = new (function() {
 
     this.setReadyToDrag = function(value) { // public function because we need this for our button
         let canvasButton = document.getElementById('drag');
+        unprimeAll(value);
         primedToDrag = value;
         if (value) {
             canvasContainer.classList.add("canGrab");
@@ -181,6 +179,41 @@ const simControls = new (function() {
             this.dragging = false;
             canvasContainer.classList.remove("isGrabbing");
         }
+    }
+
+    let primedToPlace = false;
+    this.placing = false;
+
+    this.canPlace = function() {return (!simControls.spaceDown && simControls.ctrlDown)}
+    this.isReadyToPlace = function() {return primedToPlace}
+
+    this.setReadyToPlace = function(value) {
+        let canvasButton = document.getElementById('place');
+        unprimeAll(value);
+        primedToPlace = value;
+        if (value) {
+            canvasContainer.classList.add("canPlace");
+            canvasButton.classList.add('active');
+        }
+        else {
+            canvasContainer.classList.remove("canPlace");
+            canvasButton.classList.remove('active');
+        }
+    }
+
+    this.setPlacing = function(value) {
+        if (value && primedToPlace) {
+            this.placing = true;
+        }
+        else {
+            this.placing = false;
+        }
+    }
+
+    function unprimeAll(value) { // resets everything if a button has been activated
+        if (!value) return;
+        simControls.setReadyToDrag(false);
+        simControls.setReadyToPlace(false);
     }
 
     this.reset = function() {

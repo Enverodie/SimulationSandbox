@@ -79,8 +79,8 @@ function onPointerDown(e) {
             );
         }
         // place mode
-        if (!simControls.spaceDown && simControls.ctrlDown) { // if not holding space and control clicking
-            as.placeMode = true;
+        if (simControls.isReadyToPlace()) { // if not holding space and control clicking
+            simControls.setPlacing(true);
             spf.placeSquare(e);
         }
         // delete mode
@@ -100,7 +100,7 @@ function onPointerUp(e) {
     if (e.buttons === 0) { // if left click
         simControls.holdLclick = false;
         simControls.setDragging(false);
-        if (as.placeMode) as.placeMode = !as.placeMode;
+        simControls.setPlacing(false);
         if (as.deleting) as.deleting = !as.deleting;
     }
 }
@@ -115,7 +115,7 @@ function onPointerMove(e) {
         MUStates.cameraOffset.y = ec.y/MUStates.cameraZoom - d.y;
         MUStates.gridIsUpToDate = false;
     }
-    if (as.placeMode) {
+    if (simControls.placing) {
         spf.placeSquare(ec);
     }
     if (as.deleting) {

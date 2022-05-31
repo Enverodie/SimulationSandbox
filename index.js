@@ -91,7 +91,8 @@ const canvasButtonFunctions = {
         else simControls.setReadyToDrag(false);
     },
     pressplace: function() {
-
+        if (!simControls.isReadyToPlace()) simControls.setReadyToPlace(true);
+        else simControls.setReadyToPlace(false);
     },
     pressdelete: function() {
 
