@@ -95,7 +95,8 @@ const canvasButtonFunctions = {
         else simControls.setReadyToPlace(false);
     },
     pressdelete: function() {
-
+        if (!simControls.isReadyToDelete()) simControls.setReadyToDelete(true);
+        else simControls.setReadyToDelete(false);
     },
     reset : function() {
         simControls.reset();

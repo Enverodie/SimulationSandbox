@@ -1,6 +1,10 @@
 const cspf = {
     placeSquare : function(e) {
         if (!simControls.coordIsInButton(e)) spf.placeSquare(e);
+    },
+    
+    deleteSquare : function(e) {
+        if (!simControls.coordIsInButton(e)) spf.deleteSquare(e);
     }
 }
 
@@ -90,9 +94,9 @@ function onPointerDown(e) {
             cspf.placeSquare(e);
         }
         // delete mode
-        if (!simControls.spaceDown && simControls.shiftDown) { // if not holding space and control clicking
-            as.deleting = true;
-            spf.deleteSquare(e);
+        if (simControls.isReadyToDelete()) { // if not holding space and control clicking
+            simControls.setDeleting(true);
+            cspf.deleteSquare(e);
         }
     }
     if (e.buttons === 2) { // right click
@@ -107,7 +111,7 @@ function onPointerUp(e) {
         simControls.holdLclick = false;
         simControls.setDragging(false);
         simControls.setPlacing(false);
-        if (as.deleting) as.deleting = !as.deleting;
+        simControls.setDeleting(false);
     }
 }
 
@@ -124,8 +128,8 @@ function onPointerMove(e) {
     if (simControls.placing) {
         cspf.placeSquare(e);
     }
-    if (as.deleting) {
-        spf.deleteSquare(ec);
+    if (simControls.deleting) {
+        cspf.deleteSquare(ec);
     }
 }
 
@@ -160,7 +164,7 @@ function handlePinch(e) {
 
 // controls the zoom
 function adjustZoom(zoomAmount, zoomFactor) {
-    if (!simControls.dragging && !simControls.isDeleteMode()) {
+    if (!simControls.dragging && !simControls.isReadyToDelete()) {
         if (zoomAmount) {
             MUStates.cameraZoom -= zoomAmount
         }
@@ -176,7 +180,7 @@ function adjustZoom(zoomAmount, zoomFactor) {
 }
 
 function adjustdeleteDiameter(scrollAmount) {
-    if (!simControls.isDeleteMode()) return; // returns if not in "ready to delete" state
+    if (!simControls.isReadyToDelete()) return; // returns if not in "ready to delete" state
     grf.setDeleteDiameter(scrollAmount);
 }
 

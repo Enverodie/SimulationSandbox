@@ -1,8 +1,11 @@
 Objectives:
 
-* Add clickable buttons to control active state
-* Display hotkeys to control state
 * Stop highlighting when dragging main
+* Add button to take picture and save as file
+* Add a way to save video of users' simulations
+* Add a way to save users' simulations and recover them later
+* Use cookies to keep track of user settings (menu expanded, previous color selection, etc)
+* Add a UI for users to create their own sims
 * Cells that were created in one stage and deleted in the same stage should not leave a body
 * Add support for different lifeform tick speed
 * Add conflict

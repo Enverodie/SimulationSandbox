@@ -164,7 +164,7 @@ const RMethods = new (function() {
 
         }
 
-        if (simControls.isDeleteMode()) {
+        if (simControls.isReadyToDelete()) {
             let finalRadius = MUStates.deleteDiameter * scale * MUStates.cameraZoom / 2;
             deletectx.save();
             this.setScrollEffect(deletectx, true); 

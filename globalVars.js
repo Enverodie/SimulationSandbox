@@ -24,7 +24,6 @@ const MUStates = {
     */
 const as = {
     playing     : false,
-    deleting    : false,
     placeColor  : document.getElementById('currentPlaceColor').value,
     placeType   : 'conway',
 }
@@ -156,12 +155,12 @@ const simControls = new (function() {
 
     this.pressShift = function(isPressedDown) {
         if (isPressedDown) {
-            canvasContainer.classList.add("isDeleteMode");
             this.shiftDown = true;
+            if (this.canDelete()) this.setReadyToDelete(true);
         }
         else {
-            canvasContainer.classList.remove("isDeleteMode");
             this.shiftDown = false;
+            this.setReadyToDelete(false);
         }
     }
 
@@ -221,10 +220,40 @@ const simControls = new (function() {
         }
     }
 
+    let primedToDelete = false;
+    this.deleting = false;
+
+    this.canDelete = function() {return (!this.spaceDown && this.shiftDown)}
+    this.isReadyToDelete = function() {return primedToDelete}
+
+    this.setReadyToDelete = function(value) {
+        let canvasButton = document.getElementById('delete');
+        unprimeAll(value);
+        primedToDelete = value;
+        if (value) {
+            canvasContainer.classList.add("canDelete");            
+            canvasButton.classList.add('active');
+        }
+        else {
+            canvasContainer.classList.remove("canDelete");
+            canvasButton.classList.remove('active');
+        }
+    }
+
+    this.setDeleting = function(value) {
+        if (value && primedToDelete) {
+            this.deleting = true;
+        }
+        else {
+            this.deleting = false;
+        }
+    }
+
     function unprimeAll(value) { // resets everything if a button has been activated
         if (!value) return;
         simControls.setReadyToDrag(false);
         simControls.setReadyToPlace(false);
+        simControls.setReadyToDelete(false);
     }
 
     this.reset = function() {
@@ -239,9 +268,6 @@ const simControls = new (function() {
     this.initialPinchDistance = null;
     this.lastZoom = MUStates.cameraZoom;
 
-    this.isDeleteMode = function() {
-        return (!this.spaceDown && this.shiftDown);
-    }
 });
 
 // square placement/targetting functions
