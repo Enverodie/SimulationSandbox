@@ -114,15 +114,13 @@ body {
     transition: height var(--standardTransition) .1s, transform var(--standardTransition) .1s;
 }
 
-#canvasControls > button:first-child, #canvasControls > button:last-child {
-    margin: 0;
-}
-
 #canvasControls > button:last-child {
+    margin-right: 0;
     border-radius: var(--cornerRadius);
 }
 
 #canvasControls > button:first-child {
+    margin-left: 0;
     width: 12vw !important;
     height: 80%;
     border-radius: var(--cornerRadius);
