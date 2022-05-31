@@ -81,3 +81,21 @@ function setActiveLifeform(button) {
     // set the placement
     as.placeType = button.innerText;
 }
+
+const canvasButtonFunctions = {
+    playPause : function() {
+        simControls.playPause();
+    },
+    pressdrag: function() {
+
+    },
+    pressplace: function() {
+
+    },
+    pressdelete: function() {
+
+    },
+    reset : function() {
+        simControls.reset();
+    }
+}

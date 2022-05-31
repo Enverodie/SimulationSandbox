@@ -18,16 +18,20 @@
             <button id="hideMain" style="z-index: 5" onclick="mainMenuDragging.toggleMainView()"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg" alt="navigate"></button>
             <div id="dragMainBox" style="z-index: 4"></div>
             <div id="canvasControls" style="z-index: 3">
-                <button id="playpause"  data-hotkey="s">
-                    <!-- <img src="ui/pause.svg" alt="Pause"> -->
-                    <img src="ui/play.svg" alt="Pause" draggable="false">
+                <button id="playpause"  data-hotkey="s"         onclick="canvasButtonFunctions.playPause()">
+                    <img src="ui/play.svg" alt="Play" draggable="false">
+                    <img src="ui/pause.svg" alt="Pause" draggable="false">
                 </button>
-                <button id="drag"       data-hotkey="spacebar"  onclick="this.classList.add('active');">
-                    <!-- <img src="ui/8-Directions-Arrows.svg"> -->
+                <button id="drag"       data-hotkey="spacebar + click"  onclick="canvasButtonFunctions.pressdrag()">
                     <img src="ui/rounded-arrows.svg" alt="Drag" draggable="false">
-                    <!-- <object data="ui/8-Directions-Arrows.svg" type="image/svg+xml"></object> -->
                 </button>
-                <button id="reset"      data-hotkey="r">
+                <button id="place"      data-hotkey="control + click"  onclick="canvasButtonFunctions.pressplace()">
+                    <img src="ui/add.svg" alt="Place" draggable="false">
+                </button>
+                <button id="delete"     data-hotkey="shift + click"  onclick="canvasButtonFunctions.pressdelete()">
+                    <img src="ui/delete.svg" alt="Delete" draggable="false">
+                </button>
+                <button id="reset"      data-hotkey="r"         onclick="canvasButtonFunctions.reset()">
                     <img src="ui/recycle.svg" alt="Reset" draggable="false">
                 </button>
             </div>

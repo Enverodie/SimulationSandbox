@@ -96,20 +96,70 @@ const grf = {
 /*  Useful in that some other event may be triggered with a combination of button presses
 */
 const simControls = new (function() {
+
+    this.spaceDown = false;
+    this.shiftDown = false;
+    this.ctrlDown = false;
+    this.holdLclick = false;
+
     let dragStart = { x: 0, y: 0 };
     this.getDrag = function() {return dragStart}
     this.setDrag = function(x, y) {dragStart.x = x, dragStart.y = y}
 
     this.playPause = function() {
+        let canvasButton = document.getElementById('playpause');
         as.playing = !as.playing;
         if (as.playing) {
             runLoop(); // needs to be restarted
+            canvasButton.classList.add('active');
+        }
+        else {
+            canvasButton.classList.remove('active');
         }
     }
 
-    this.spaceDown = false;
-    this.shiftDown = false;
-    this.holdLclick = false;
+    this.pressSpace = function(isPressedDown) {
+        if (isPressedDown) {
+            this.spaceDown = true;
+            canvasContainer.classList.add("canGrab");
+        }
+        else {
+            this.spaceDown = false;
+            canvasContainer.classList.remove("canGrab");
+        }
+    }
+
+    this.pressControl = function(isPressedDown) {
+        if (isPressedDown) {
+            this.ctrlDown = true;
+            canvasContainer.classList.add("canPlace");
+        }
+        else {
+            this.ctrlDown = false;
+            canvasContainer.classList.remove("canPlace");
+        }
+    }
+
+    this.pressShift = function(isPressedDown) {
+        if (isPressedDown) {
+            canvasContainer.classList.add("isDeleteMode");
+            this.shiftDown = true;
+        }
+        else {
+            canvasContainer.classList.remove("isDeleteMode");
+            this.shiftDown = false;
+        }
+    }
+
+    this.reset = function() {
+        g.living.clear();
+        g.nextGen.clear();
+        g.dead?.clear(); // optional chaining operator because we want to be able to disable dead rendering and are not sure if it will exist at this point
+        MUStates.permaDeathQueue.length = 0;
+        g.permadead?.clear();
+        MUStates.gridIsUpToDate = false;
+    }
+
     this.initialPinchDistance = null;
     this.lastZoom = MUStates.cameraZoom;
 

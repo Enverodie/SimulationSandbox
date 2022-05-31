@@ -83,14 +83,16 @@ body {
     height: 15vw;
     max-height: 15vh;
     max-width: calc(100% - var(--minimumDistanceFromMain) - var(--leftCorner));
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 #canvasControls button {
 
+    --borderThickness: .33rem;
     --cornerRadius: 0 1rem 0rem 0;
-
-    border: var(--bgOutline) solid .33rem;
+    
+    position: relative;
+    border: var(--bgOutline) solid var(--borderThickness);
     width: 7vw;
     height: 60%;
     margin: 0 .14vw;
@@ -98,11 +100,15 @@ body {
     background-color: var(--bgColor);
 
     transition: height var(--standardTransition) .15s;
+    overflow-y: hidden;
 }
 
 #canvasControls button img {
     height: 75%;
     width: auto;
+    max-width: 100%;
+    max-height: fit-content;
+    margin: auto;
     
     transform: rotate(-8deg);
     transition: height var(--standardTransition) .1s, transform var(--standardTransition) .1s;
@@ -117,16 +123,32 @@ body {
 }
 
 #canvasControls > button:first-child {
-    position: relative;
     width: 12vw !important;
     height: 80%;
-    background-color: rgb(152, 5, 5);
-    color: var(--txtColor);
     border-radius: var(--cornerRadius);
+}
+
+#canvasControls button[data-hotkey]::after {
+    content: 'hotkey: ' attr(data-hotkey);
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background-color: var(--bgColor);
+    border: calc(var(--borderThickness) * 2 / 3) solid var(--bgOutline);
+    padding: .4rem;
+    padding-right: 1rem;
+    border-radius: .6rem;
+    color: var(--txtColor);
+    z-index: 99;
+    visibility: hidden;
 }
 
 #canvasControls button:hover {
     height: 100%;
+}
+
+#canvasControls button[data-hotkey]:hover::after {
+    visibility: visible;
 }
 
 #canvasControls button:hover img {
@@ -158,6 +180,30 @@ body {
     position: relative;
     /* overflow-x: hidden; */
     z-index: 5;
+}
+
+#playpause img {
+    display: none;
+}
+
+#playpause.active {
+    background-color: rgb(152, 5, 5) !important;
+}
+
+#playpause.active img[alt='Pause'] {
+    display: inherit !important;
+}
+
+#playpause:not(.active) {
+    background-color: rgb(5, 152, 5) !important;
+}
+
+#playpause:not(.active) img[alt='Play'] {
+    display: inherit !important;
+}
+
+#reset:active {
+    background-color: rgb(36, 105, 117);
 }
 
 input[type='number'] {

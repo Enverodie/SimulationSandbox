@@ -4,7 +4,7 @@
 function handleKeypress(press) {
     switch(press.key) {
         case 'r': // reset
-            reset();
+            simControls.reset();
             break;
         case 's': // start/stop
             simControls.playPause();
@@ -20,15 +20,13 @@ function handleKeydownUp(press) {
 
         switch(press.key) {
             case ' ':
-                simControls.spaceDown = true;
-                canvasContainer.classList.add("canGrab");
+                simControls.pressSpace(true);
                 break;
             case 'Control':
-                canvasContainer.classList.add("canPlace");
+                simControls.pressControl(true);
                 break;
             case 'Shift':
-                canvasContainer.classList.add("isDeleteMode");
-                simControls.shiftDown = true;
+                simControls.pressShift(true);
                 break;
             default:
                 break;
@@ -38,15 +36,13 @@ function handleKeydownUp(press) {
 
         switch(press.key) {
             case ' ':
-                simControls.spaceDown = false;
-                canvasContainer.classList.remove("canGrab");
+                simControls.pressSpace(false);
                 break;
             case 'Control':
-                canvasContainer.classList.remove("canPlace");
+                    simControls.pressControl(false);
                 break;
             case 'Shift':
-                canvasContainer.classList.remove("isDeleteMode");
-                simControls.shiftDown = false;
+                simControls.pressShift(false);
                 break;
             default:
                 break;
@@ -84,12 +80,12 @@ function onPointerDown(e) {
             );
         }
         // place mode
-        if (!simControls.spaceDown && e.ctrlKey) { // if not holding space and control clicking
+        if (!simControls.spaceDown && simControls.ctrlDown) { // if not holding space and control clicking
             as.placeMode = true;
             spf.placeSquare(e);
         }
         // delete mode
-        if (!simControls.spaceDown && e.shiftKey) { // if not holding space and control clicking
+        if (!simControls.spaceDown && simControls.shiftDown) { // if not holding space and control clicking
             as.deleting = true;
             spf.deleteSquare(e);
         }
