@@ -86,21 +86,24 @@ body {
     /* overflow: hidden; */
 }
 
-#canvasControls button {
+#canvasControls button, #hideMain {
 
     --borderThickness: .33rem;
     --cornerRadius: 0 1rem 0rem 0;
     
     position: relative;
     border: var(--bgOutline) solid var(--borderThickness);
-    width: 7vw;
-    height: 60%;
-    margin: 0 .14vw;
     cursor: pointer;
     background-color: var(--bgColor);
 
     transition: height var(--standardTransition) .15s;
     overflow-y: hidden;
+}
+
+#canvasControls button {
+    width: 7vw;
+    height: 60%;
+    margin: 0 .14vw;
 }
 
 #canvasControls button img {
@@ -250,9 +253,18 @@ main.dragging, #canvasContainer.dragging {
     position: absolute;
     top: 0;
     right: 0;
-    padding: .3rem;
+    padding: .6rem .3rem;
     margin: var(--hamburgerHideControlsMargin);
     margin-right: var(--minimumDistanceFromMain);
+
+}
+
+#hideMain img {
+    transition: transform var(--standardTransition) .1s;
+}
+
+#hideMain:active img {
+    transform: rotate(-10deg);
 }
 
 #dragMainBox {
@@ -328,4 +340,15 @@ main.dragging, #canvasContainer.dragging {
 
 .listChoice button:last-child, .buttonStyle:last-child {
     margin-right: 0;
+}
+
+#currentPlaceColor {
+    background-color: var(--bgColor);
+    padding: .5em;
+    border: none;
+    cursor: pointer;
+}
+
+#currentPlaceColor:hover {
+    background-color: var(--txtColor);
 }
