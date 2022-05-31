@@ -90,10 +90,21 @@ const grf = {
     }
 }
 
+const onCanvasButtons = [...document.querySelectorAll('#canvasControls button'), document.getElementById('hideMain')] // useful to prevent square info display when hovering over these elements
+
 // Simulation controls
 /*  Useful in that some other event may be triggered with a combination of button presses
 */
 const simControls = new (function() {
+
+    this.coordIsInButton = function(mouseEvent) {
+        // console.log("Testing coord");
+        // console.log(mouseEvent);
+        for (ele of onCanvasButtons) {
+            if (mouseEvent.target === ele || mouseEvent.target?.tagName === "IMG") return true; // If the pointer was previously on a button or an image (usually in the button)
+        }
+        return false;
+    }
 
     this.spaceDown = false;
     this.shiftDown = false;

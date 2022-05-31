@@ -6,8 +6,6 @@ const canvasDead = document.getElementById('canvasDead');
 const canvasGrid = document.getElementById('canvasGrid');
 const deleteGrid = document.getElementById('canvasDeleteHighlight');
 
-const onCanvasButtons = [...document.querySelectorAll('#canvasControls button'), document.getElementById('hideMain')] // useful to prevent square info display when hovering over these elements
-
 const deadctx = canvasDead.getContext('2d', {alpha: false});
 const ctx = canvas.getContext('2d');
 const gridctx = canvasGrid.getContext('2d');
@@ -102,12 +100,10 @@ const RMethods = new (function() {
     }
     
     this.addHTMLInfoPanel = () => {
-        for (ele of onCanvasButtons) {
-            if (MUStates.previousCoord.target === ele) return; // If the pointer was previously on a button
-        }
+        // if  return;
         let maxOpacity = .8;
         let remSpacing = .6;
-        let sq = grf.findLiveSquare(MUStates.previousCoord.x, MUStates.previousCoord.y);
+        let sq = (simControls.coordIsInButton(MUStates.previousCoord)) ? undefined : grf.findLiveSquare(MUStates.previousCoord.x, MUStates.previousCoord.y);
         let element = document.getElementById('squareInfo');
         let needsAppended = false;
         if (element == null) { // no element has been created yet to show the info

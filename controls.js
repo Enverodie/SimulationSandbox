@@ -1,3 +1,9 @@
+const cspf = {
+    placeSquare : function(e) {
+        if (!simControls.coordIsInButton(e)) spf.placeSquare(e);
+    }
+}
+
 // handle keyboard inputs
 
 // this function handles tap inputs
@@ -81,7 +87,7 @@ function onPointerDown(e) {
         // place mode
         if (simControls.isReadyToPlace()) { // if not holding space and control clicking
             simControls.setPlacing(true);
-            spf.placeSquare(e);
+            cspf.placeSquare(e);
         }
         // delete mode
         if (!simControls.spaceDown && simControls.shiftDown) { // if not holding space and control clicking
@@ -116,7 +122,7 @@ function onPointerMove(e) {
         MUStates.gridIsUpToDate = false;
     }
     if (simControls.placing) {
-        spf.placeSquare(ec);
+        cspf.placeSquare(e);
     }
     if (as.deleting) {
         spf.deleteSquare(ec);
