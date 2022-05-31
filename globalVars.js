@@ -23,7 +23,6 @@ const MUStates = {
     event listeners need to keep track of the same thing happening. 
     */
 const as = {
-    dragging    : false,
     playing     : false,
     placeMode   : false,
     deleting    : false,
@@ -102,9 +101,14 @@ const simControls = new (function() {
     this.ctrlDown = false;
     this.holdLclick = false;
 
+    let primedToDrag = false;
+    this.dragging = false;
+
     let dragStart = { x: 0, y: 0 };
     this.getDrag = function() {return dragStart}
-    this.setDrag = function(x, y) {dragStart.x = x, dragStart.y = y}
+    this.setDragCoords = function(x, y) { dragStart.x = x, dragStart.y = y}
+    this.canDrag = function() {return !(this.ctrlDown || this.shiftDown)}
+    this.isReadyToDrag = function() {return primedToDrag}
 
     this.playPause = function() {
         let canvasButton = document.getElementById('playpause');
@@ -121,11 +125,13 @@ const simControls = new (function() {
     this.pressSpace = function(isPressedDown) {
         if (isPressedDown) {
             this.spaceDown = true;
-            canvasContainer.classList.add("canGrab");
+            if (this.canDrag()) {
+                this.setReadyToDrag(true);
+            } 
         }
         else {
             this.spaceDown = false;
-            canvasContainer.classList.remove("canGrab");
+            this.setReadyToDrag(false);
         }
     }
 
@@ -148,6 +154,32 @@ const simControls = new (function() {
         else {
             canvasContainer.classList.remove("isDeleteMode");
             this.shiftDown = false;
+        }
+    }
+
+    this.setReadyToDrag = function(value) { // public function because we need this for our button
+        let canvasButton = document.getElementById('drag');
+        primedToDrag = value;
+        if (value) {
+            canvasContainer.classList.add("canGrab");
+            canvasButton.classList.add('active');
+        } 
+        else {
+            canvasContainer.classList.remove("canGrab");
+            canvasButton.classList.remove('active');
+            this.initialPinchDistance = null;
+            this.lastZoom = MUStates.cameraZoom;
+        } 
+    }
+
+    this.setDragging = function(value) {
+        if (value && primedToDrag) {
+            this.dragging = true;
+            canvasContainer.classList.add("isGrabbing");
+        }
+        else {
+            this.dragging = false;
+            canvasContainer.classList.remove("isGrabbing");
         }
     }
 

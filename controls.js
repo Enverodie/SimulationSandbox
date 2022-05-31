@@ -71,10 +71,9 @@ function onPointerDown(e) {
     if (e.buttons === 1) { // if left click
         simControls.holdLclick = true;
         // drag mode
-        if (simControls.spaceDown) {
-            as.dragging = true;
-            canvasContainer.classList.add("isGrabbing");
-            simControls.setDrag(
+        if (simControls.isReadyToDrag()) {
+            simControls.setDragging(true);
+            simControls.setDragCoords(
                 getEventLocation(e).x/MUStates.cameraZoom - MUStates.cameraOffset.x,
                 getEventLocation(e).y/MUStates.cameraZoom - MUStates.cameraOffset.y
             );
@@ -100,12 +99,7 @@ function onPointerUp(e) {
     // console.log(e.buttons, e.isPrimary);
     if (e.buttons === 0) { // if left click
         simControls.holdLclick = false;
-        if (as.dragging) {
-            as.dragging = false;
-            canvasContainer.classList.remove("isGrabbing");
-            simControls.initialPinchDistance = null;
-            simControls.lastZoom = MUStates.cameraZoom;
-        }
+        simControls.setDragging(false);
         if (as.placeMode) as.placeMode = !as.placeMode;
         if (as.deleting) as.deleting = !as.deleting;
     }
@@ -115,7 +109,7 @@ function onPointerUp(e) {
 function onPointerMove(e) {
     let ec = getEventLocation(e);
     MUStates.previousCoord = {x: ec.x, y: ec.y, target: e.target};
-    if (as.dragging) {
+    if (simControls.dragging) {
         let d = simControls.getDrag();
         MUStates.cameraOffset.x = ec.x/MUStates.cameraZoom - d.x; 
         MUStates.cameraOffset.y = ec.y/MUStates.cameraZoom - d.y;
@@ -136,7 +130,7 @@ function handleTouch(e, singleTouchHandler) {
         singleTouchHandler(e)
     }
     else if (e.type == "touchmove" && e.touches.length == 2) {
-        as.dragging = false
+        simControls.dragging = false
         handlePinch(e)
     }
 }
@@ -160,7 +154,7 @@ function handlePinch(e) {
 
 // controls the zoom
 function adjustZoom(zoomAmount, zoomFactor) {
-    if (!as.dragging && !simControls.isDeleteMode()) {
+    if (!simControls.dragging && !simControls.isDeleteMode()) {
         if (zoomAmount) {
             MUStates.cameraZoom -= zoomAmount
         }

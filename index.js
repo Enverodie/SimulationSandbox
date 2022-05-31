@@ -87,7 +87,8 @@ const canvasButtonFunctions = {
         simControls.playPause();
     },
     pressdrag: function() {
-
+        if (!simControls.isReadyToDrag()) simControls.setReadyToDrag(true);
+        else simControls.setReadyToDrag(false);
     },
     pressplace: function() {
 
